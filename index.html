@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorias</title>
+    <style>
+        .negativo {
+            color: yellow;
+            font-weight: bold;
+        }
+		
+		h1, h3 {
+            color: rgba(239, 113, 205, 0.5);
+        }
+
+        td, th {
+            text-align: right;
+            color: white;
+            padding: 5px;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: rgba(91, 10, 130, 0.5);
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: rgba(91, 10, 130, 0.8);
+        }
+
+        tbody tr.negativo {
+            background-color: rgba(255, 255, 0, 0.5);
+            color: black;
+        }
+
+        tbody tr.negativo td {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body style="background-color: rgba(91, 10, 130, 1);">
+    <h1>Categorias</h1>
+    <table id="categoriasTable" border="1">
+        <thead>
+            <tr>
+                <th style="text-align: left;">Descrição</th>
+                <th>Verba Original</th>
+                <th>Verba Adicional</th>
+                <th>Verba do Mês</th>
+                <th>Saldo do Mês</th>
+                <th>Saldo Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Os dados das categorias serão inseridos aqui -->
+        </tbody>
+    </table>
+    <br><br>
+    <!-- Adicione os campos para receber os totais de verba e saldo do mês -->
+    <div>
+        <h3>Verba Total do Mês: <span id="tbxVerbaTotalMes"></span></h3>
+        <h3>Saldo Total do Mês: <span id="tbxSaldoTotalMes"></span></h3>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
