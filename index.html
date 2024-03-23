@@ -14,9 +14,14 @@
             color: rgba(239, 113, 205, 0.5);
         }
 		
-		h4 {
+		h4, label {
             color: white;
         }
+		
+		label {
+			width: 160px;
+			display: inline-block;
+		}
 
         td, th {
             text-align: right;
@@ -102,7 +107,6 @@
 			<button type="button" onclick="inserirSaida()">Inserir Saída</button>
 		</form>
 	</div>
-
 
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
