@@ -14,6 +14,8 @@ firebase.initializeApp(firebaseConfig);
 let dadosCategorias = firebase.database().ref('/Categorias');
 let dadosMeses = firebase.database().ref('/Meses');
 
+let saidas;
+
 // Função para buscar e preencher a tabela com os dados das categorias
 async function preencherTabelaCategorias() {
     try {
@@ -27,10 +29,10 @@ async function preencherTabelaCategorias() {
 
         // Buscar saídas
         let snapshotSaidas = await firebase.database().ref('/Saidas').once('value');
-        let saidas = snapshotSaidas.val();
+        saidas = snapshotSaidas.val();
 
         // Chamar a função para filtrar e preencher os dados na tabela
-        FiltrarVerbasMesCategorias(categorias, meses, saidas);
+        FiltrarVerbasMesCategorias(categorias, meses);
     } catch (error) {
         console.error("Erro ao obter categorias, meses e saídas: ", error);
     }
@@ -38,7 +40,7 @@ async function preencherTabelaCategorias() {
 
 // Função para filtrar e preencher os dados das categorias na tabela
 // Função para filtrar e preencher os dados das categorias na tabela
-function FiltrarVerbasMesCategorias(categorias, meses, saidas) {
+function FiltrarVerbasMesCategorias(categorias, meses) {
     // Referência à tabela do corpo
     let tbody = document.querySelector('#categoriasTable tbody');
 
@@ -140,3 +142,131 @@ function dataMenorIgual(data1, data2) {
 
 // Chamada inicial para preencher a tabela
 preencherTabelaCategorias();
+
+
+// Função para preencher a combobox de categorias
+async function preencherComboboxCategorias() {
+    try {
+        // Buscar categorias do Firebase
+        let snapshotCategorias = await firebase.database().ref('/Categorias').once('value');
+        let categorias = snapshotCategorias.val();
+
+        // Referência à combobox de categorias
+        let selectCategoria = document.getElementById('categoria');
+
+        // Limpar as opções existentes
+        selectCategoria.innerHTML = '';
+
+        // Adicionar uma opção padrão
+        let defaultOption = document.createElement('option');
+        defaultOption.text = 'Selecione uma categoria';
+        selectCategoria.add(defaultOption);
+
+        // Adicionar cada categoria como uma opção na combobox
+        for (let chaveCategoria in categorias) {
+            let categoria = categorias[chaveCategoria];
+
+            let option = document.createElement('option');
+            option.value = categoria.chave; // Usar a chave da categoria como valor
+            option.text = categoria.descricao; // Usar a descrição da categoria como texto da opção
+            selectCategoria.add(option);
+        }
+    } catch (error) {
+        console.error("Erro ao preencher combobox de categorias:", error);
+    }
+}
+
+// Função para preencher a combobox de contas
+async function preencherComboboxContas() {
+    try {
+        // Buscar contas do Firebase
+        let snapshotContas = await firebase.database().ref('/Contas').once('value');
+        let contas = snapshotContas.val();
+
+        // Referência à combobox de contas
+        let selectConta = document.getElementById('conta');
+
+        // Limpar as opções existentes
+        selectConta.innerHTML = '';
+
+        // Adicionar uma opção padrão
+        let defaultOption = document.createElement('option');
+        defaultOption.text = 'Selecione uma conta';
+        selectConta.add(defaultOption);
+
+        // Adicionar cada conta como uma opção na combobox
+        for (let chaveConta in contas) {
+            let conta = contas[chaveConta];
+
+            let option = document.createElement('option');
+            option.value = conta.chave; // Usar a chave da conta como valor
+            option.text = conta.descricaoConta; // Usar o nome da conta como texto da opção
+            selectConta.add(option);
+        }
+    } catch (error) {
+        console.error("Erro ao preencher combobox de contas:", error);
+    }
+}
+
+// Chamar as funções para preencher as combobox quando a página carregar
+window.onload = function() {
+    preencherComboboxCategorias();
+    preencherComboboxContas();
+};
+
+// Função para inserir uma nova saída
+function inserirSaida() {
+    // Coletar os valores do formulário
+    let descricao = document.getElementById('descricao').value;
+    let valor = parseFloat(document.getElementById('valor').value);
+    let data = document.getElementById('data').value;
+    let categoria = parseInt(document.getElementById('categoria').value);
+    let conta = parseInt(document.getElementById('conta').value);
+    let mesReferencia = document.getElementById('mesReferencia').value;
+    let tipoSaida = document.getElementById('tipoSaida').value;
+
+    // Validar os valores (você pode adicionar suas próprias verificações de validação aqui)
+
+    // Criar o objeto de saída
+    let novaSaida = {
+        descricao: descricao,
+        valorParcela: valor,
+        data: data,
+        chaveCategoria: categoria,
+        chaveConta: conta,
+        mesReferencia: mesReferencia,
+        tipoSaida: tipoSaida === "credito" ? 0 : 1 // converter para o formato esperado (0 para crédito, 1 para dinheiro)
+    };
+	
+	if (saidas){
+		// Encontrar a última chave da lista de saídas
+		let ultimaChave = Object.values(saidas).reduce((maxChave, saida) => {
+			return Math.max(maxChave, saida.chave);
+		}, 0);
+
+		// Definir a chave da nova saída como a última chave mais um
+		novaSaida.chave = ultimaChave + 1;
+	}else{
+		novaSaida.chave = 1;
+	}
+	
+    // Enviar os dados para o Firebase
+    firebase.database().ref('/Saidas/chave-' + novaSaida.chave).set(novaSaida)
+        .then(() => {
+            // Limpar o formulário após a inserção bem-sucedida
+            document.getElementById('formNovaSaida').reset();
+
+            // Atualizar a tabela de categorias
+            preencherTabelaCategorias();
+
+            // Você pode adicionar uma mensagem de sucesso ou redirecionar o usuário para outra página, se desejar
+            alert("Nova saída inserida com sucesso!");
+        })
+        .catch((error) => {
+            console.error("Erro ao inserir nova saída:", error);
+            alert("Erro ao inserir nova saída. Por favor, tente novamente.");
+        });
+		
+}
+
+
