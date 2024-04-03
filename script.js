@@ -13,6 +13,8 @@ firebase.initializeApp(firebaseConfig);
 
 let dadosCategorias = firebase.database().ref('/Categorias');
 let dadosMeses = firebase.database().ref('/Meses');
+let categorias;
+let contas;
 
 let saidas;
 
@@ -21,7 +23,7 @@ async function preencherTabelaCategorias() {
     try {
         // Buscar categorias
         let snapshotCategorias = await dadosCategorias.once('value');
-        let categorias = snapshotCategorias.val();
+        categorias = snapshotCategorias.val();
 
         // Buscar meses
         let snapshotMeses = await dadosMeses.once('value');
@@ -140,10 +142,6 @@ function dataMenorIgual(data1, data2) {
 }
 
 
-// Chamada inicial para preencher a tabela
-preencherTabelaCategorias();
-
-
 // Função para preencher a combobox de categorias
 async function preencherComboboxCategorias() {
     try {
@@ -181,7 +179,7 @@ async function preencherComboboxContas() {
     try {
         // Buscar contas do Firebase
         let snapshotContas = await firebase.database().ref('/Contas').once('value');
-        let contas = snapshotContas.val();
+        contas = snapshotContas.val();
 
         // Referência à combobox de contas
         let selectConta = document.getElementById('conta');
@@ -207,12 +205,6 @@ async function preencherComboboxContas() {
         console.error("Erro ao preencher combobox de contas:", error);
     }
 }
-
-// Chamar as funções para preencher as combobox quando a página carregar
-window.onload = function() {
-    preencherComboboxCategorias();
-    preencherComboboxContas();
-};
 
 // Função para inserir uma nova saída
 function inserirSaida() {
@@ -274,4 +266,136 @@ function inserirSaida() {
 		
 }
 
+// Função para formatar a data no formato "dd/mm/yyyy"
+function formatarData(data) {
+    let dia = String(data.getDate()).padStart(2, '0');
+    let mes = String(data.getMonth() + 1).padStart(2, '0'); // Mês começa do zero, então é necessário adicionar 1
+    let ano = data.getFullYear();
+    return `${dia}/${mes}/${ano}`;
+}
 
+
+function preencherUltimasSaidasMesAtual() {
+    // Referência à tabela do corpo
+    let tbody = document.querySelector('#ultimasSaidasTable tbody');
+
+    // Limpa o conteúdo anterior da tabela
+    tbody.innerHTML = '';
+
+    // Obter o mês e ano atuais
+    let mesAtual = new Date().getMonth();
+    let anoAtual = new Date().getFullYear();
+
+    // Filtrar as saídas do mês atual
+    let saídasMesAtual = Object.values(saidas).filter(saida => {
+        let dataSaida = new Date(saida.mesReferencia);
+        return dataSaida.getMonth() === mesAtual && dataSaida.getFullYear() === anoAtual;
+    });
+
+    // Ordenar as saídas do mês atual pela data (do mais recente para o mais antigo)
+    let ultimasSaidasMesAtual = saídasMesAtual.sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 20);
+
+    // Mapear as chaves das categorias para suas descrições correspondentes
+	categorias = Object.values(categorias);
+    let categoriasMap = {};
+    categorias.forEach(categoria => {
+        categoriasMap[categoria.chave] = categoria.descricao;
+    });
+	
+	contas = Object.values(contas);
+    let contasMap = {};
+    contas.forEach(conta => {
+        contasMap[conta.chave] = conta.descricaoConta;
+    });
+
+    // Iterar sobre as últimas saídas do mês atual
+    ultimasSaidasMesAtual.forEach(saida => {
+        // Criar uma nova linha na tabela para cada saída
+        let row = tbody.insertRow();
+
+        // Preencher os dados nas células da linha
+        let cells = [
+            saida.descricao,
+            saida.valorParcela.toFixed(2),
+            formatarData(new Date(saida.data)),
+            categoriasMap[saida.chaveCategoria],
+            contasMap[saida.chaveConta], 
+            formatarData(new Date(saida.mesReferencia)),
+            saida.tipoSaida === 0 ? 'Crédito' : 'Dinheiro' // Exibir o tipo de saída como "Crédito" ou "Dinheiro"
+        ];
+
+        cells.forEach(value => {
+            let cell = row.insertCell();
+            cell.innerText = value;
+        });
+    });
+}
+
+// Função para preencher a tabela com o valor gasto no crédito por conta no mês atual
+function preencherValorCreditoPorConta() {
+    // Referência à tabela do corpo
+    let tbody = document.querySelector('#valorCreditoPorContaTable tbody');
+
+    // Limpa o conteúdo anterior da tabela
+    tbody.innerHTML = '';
+
+    // Obter o mês e ano atuais
+    let mesAtual = new Date().getMonth();
+    let anoAtual = new Date().getFullYear();
+
+    // Inicializar um objeto para armazenar o valor gasto no crédito por conta
+    let valorCreditoPorConta = {};
+
+    // Filtrar as saídas do mês atual que são do tipo "Crédito"
+    let saidasMesAtualCredito = Object.values(saidas).filter(saida => {
+        let dataSaida = new Date(saida.mesReferencia);
+        return dataSaida.getMonth() === mesAtual && dataSaida.getFullYear() === anoAtual && saida.tipoSaida === 0; // 0 indica crédito
+    });
+
+    // Iterar sobre as saídas do mês atual do tipo "Crédito"
+    saidasMesAtualCredito.forEach(saida => {
+        // Se a conta ainda não estiver no objeto, inicialize-a com o valor da saída
+        if (!valorCreditoPorConta[saida.chaveConta]) {
+            valorCreditoPorConta[saida.chaveConta] = saida.valorParcela;
+        } else {
+            // Se a conta já estiver no objeto, adicione o valor da saída ao valor existente
+            valorCreditoPorConta[saida.chaveConta] += saida.valorParcela;
+        }
+    });
+
+    // Mapear as chaves das contas para suas descrições correspondentes
+    let contasMap = {};
+    contas.forEach(conta => {
+        contasMap[conta.chave] = conta.descricaoConta;
+    });
+
+    // Iterar sobre as contas e preencher a tabela
+    Object.entries(valorCreditoPorConta).forEach(([chaveConta, valorGasto]) => {
+        // Encontrar a descrição da conta correspondente
+        let descricaoConta = contasMap[chaveConta];
+
+        // Criar uma nova linha na tabela para cada conta
+        let row = tbody.insertRow();
+
+        // Preencher os dados nas células da linha
+        let cells = [
+            descricaoConta,
+            `${mesAtual + 1}/${anoAtual}`, // Adicionar 1 ao mês porque os meses começam do zero
+            valorGasto.toFixed(2)
+        ];
+
+        cells.forEach(value => {
+            let cell = row.insertCell();
+            cell.innerText = value;
+        });
+    });
+}
+
+// Chamar a função para preencher a tabela do valor gasto no crédito por conta no mês atual quando a página carregar
+window.onload = async function() {
+    await preencherTabelaCategorias();
+    await preencherComboboxCategorias();
+    await preencherComboboxContas();
+    await preencherUltimasSaidasMesAtual();
+    preencherValorCreditoPorConta();
+};
