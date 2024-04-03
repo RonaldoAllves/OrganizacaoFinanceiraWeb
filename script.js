@@ -285,6 +285,9 @@ function preencherUltimasSaidasMesAtual() {
     // Obter o mês e ano atuais
     let mesAtual = new Date().getMonth();
     let anoAtual = new Date().getFullYear();
+	
+	// Formatar o mês de referência no formato "MM/yyyy"
+    let mesReferenciaFormatado = `${(mesAtual+1).toString().padStart(2, '0')}/${anoAtual}`;
 
     // Filtrar as saídas do mês atual
     let saídasMesAtual = Object.values(saidas).filter(saida => {
@@ -320,7 +323,7 @@ function preencherUltimasSaidasMesAtual() {
             formatarData(new Date(saida.data)),
             categoriasMap[saida.chaveCategoria],
             contasMap[saida.chaveConta], 
-            formatarData(new Date(saida.mesReferencia)),
+            mesReferenciaFormatado,
             saida.tipoSaida === 0 ? 'Crédito' : 'Dinheiro' // Exibir o tipo de saída como "Crédito" ou "Dinheiro"
         ];
 
