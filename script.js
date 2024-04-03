@@ -225,7 +225,12 @@ function inserirSaida() {
     let mesReferencia = document.getElementById('mesReferencia').value;
     let tipoSaida = document.getElementById('tipoSaida').value;
 
-    // Validar os valores (você pode adicionar suas próprias verificações de validação aqui)
+    // Validar os valores
+    if (!descricao || isNaN(parseFloat(valor)) || !data || isNaN(categoria) || isNaN(conta) || !mesReferencia || !tipoSaida) {
+        // Se algum campo estiver em branco ou se o valor não for um número válido, exibir mensagem de erro
+        alert("Por favor, preencha todos os campos corretamente.");
+        return; // Parar a execução da função se houver erro
+    }
 
     // Criar o objeto de saída
     let novaSaida = {
