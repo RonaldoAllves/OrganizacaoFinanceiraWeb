@@ -70,7 +70,40 @@
         <h4>Verba Total do Mês: <span id="tbxVerbaTotalMes" style="color: rgba(239, 113, 205, 0.5); font-size: 20px;"></span></h4>
         <h4>Saldo Total do Mês: <span id="tbxSaldoTotalMes" style="color: rgba(239, 113, 205, 0.5); font-size: 20px;"></span></h4>
     </div>
-	<br><br>
+	<br>
+	
+	<h3>Últimas 20 Saídas</h3>
+	<table id="ultimasSaidasTable" border="1">
+		<thead>
+			<tr>
+				<th>Descrição</th>
+				<th>Valor</th>
+				<th>Data</th>
+				<th>Categoria</th>
+				<th>Conta</th>
+				<th>Mês de Referência</th>
+				<th>Tipo de Saída</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- Os dados das últimas saídas serão inseridos aqui -->
+		</tbody>
+	</table>
+	<br>
+	
+	<table id="valorCreditoPorContaTable" border="1">
+		<thead>
+			<tr>
+				<th>Descrição da Conta</th>
+				<th>Mês Atual</th>
+				<th>Valor Gasto no Crédito</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- Os dados das contas serão inseridos aqui -->
+		</tbody>
+	</table>
+
 	
 	<!-- Adicione este formulário após a tabela de categorias -->
 	<div>
