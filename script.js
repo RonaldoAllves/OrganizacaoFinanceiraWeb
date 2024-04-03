@@ -15,8 +15,20 @@ let dadosCategorias = firebase.database().ref('/Categorias');
 let dadosMeses = firebase.database().ref('/Meses');
 let categorias;
 let contas;
-
 let saidas;
+
+// Função para esconder a primeira parte e exibir a segunda parte
+function carregarSaidas() {
+    document.getElementById('parte1').style.display = 'none';
+    document.getElementById('parte2').style.display = 'block';
+}
+
+// Função para esconder a segunda parte e exibir a primeira parte
+function carregarTabelaCategorias() {
+    document.getElementById('parte2').style.display = 'none';
+    document.getElementById('parte1').style.display = 'block';
+}
+
 
 // Função para buscar e preencher a tabela com os dados das categorias
 async function preencherTabelaCategorias() {
@@ -402,3 +414,7 @@ window.onload = async function() {
     await preencherUltimasSaidasMesAtual();
     preencherValorCreditoPorConta();
 };
+
+
+
+
