@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Categorias</title>
     <style>
+	    :root{
+			/*--bg-body: #5B0A82;*/
+			--bg-body: white;
+			--color-font: #EF73CD;
+			--color-button: #a13a84;
+			--color-card: #1E212C;
+			--color-error: #ed6f99;
+			--color-placeholder: #918a9194;
+			--color-list: #7c5098;
+			--color-font-list: white;
+			--color-titulo: rgb(71,131,198);
+			--color-button-entradas: #4494db;
+			--color-estatisticas: #6fd86f;
+			--color-grafico: #EF4F43;
+		}
+	
         .negativo {
             color: red;
             font-weight: bold;
@@ -24,7 +40,7 @@
         }
 
         th {
-            text-align: left;
+            text-align: center; /* Centralizar o texto do cabeçalho */
             color: white;
             background-color: rgba(71, 131, 198); /* Cor de fundo do cabeçalho */
             padding: 5px;
@@ -53,24 +69,92 @@
         tbody tr.negativo td {
             font-weight: bold;
         }
+
+        /* Estilos adicionados para os botões */
+        .buttons-container {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        button {
+            width: 150px; 
+			height: 30px;
+            margin: 10px;
+			border: none;
+			background-color: rgba(68, 148, 219);
+			color: white;
+			border-radius: 10px;
+			cursor: pointer;
+        }
+		
+		button[disabled]{
+			opacity: 0.7;
+		}
+		
+		table{
+		    margin-top: 10px;
+			margin-bottom: 15px;			
+			border-collapse: collapse;
+			width: 90%;
+			background-color: white;
+			overflow: scroll;
+			//max-width: 1000px;
+		}	
+
+		input, select{
+			width: 200px;
+		}
+		
+		.logo img{
+			width: 45px;
+			height: 45px;
+			margin-right: 0px;
+		}
+
+		.logo{
+			display: flex;
+			justify-content: center;
+			align-items: center;   
+		}
+
+		.logo h2{
+			color: var(--color-font);
+		}
+		
+		@media only screen and (max-width: 350px){
+			.logo > h2{
+				display: none;
+			}
+		}
+		
     </style>
 </head>
 <body style="background-color: rgba(91, 10, 130, 1);">
    
-    <button onclick="carregarTabelaCategorias()">Categorias</button>
-    <button onclick="carregarSaidas()">Saídas</button>
+    <header>       
+		<div class="container">
+			<div class="logo">
+				<img src="icon-logo.png">
+				<h2>Planejamento Financeiro</h2>
+			</div>
+		</div>
+	</header> 
+   
+    <div class="buttons-container">
+        <button onclick="carregarTabelaCategorias()">Categorias</button>
+        <button onclick="carregarSaidas()">Saídas</button>
+    </div>
 
    
     <div id="parte1">
-        <h1>Categorias</h1>
+        <h1>Visão geral</h1>
         <table id="categoriasTable" border="1">
             <thead>
                 <tr>
                     <th>Descrição</th>
-                    <th>Verba Original</th>
-                    <th>Verba Adicional</th>
-                    <th>Verba do Mês</th>
-                    <th>Saldo do Mês</th>
+                    <th>Verba do Mês</th>					
+                    <th>Gasto do Mês</th>					
+                    <th>Saldo do mês</th>
                     <th>Saldo Total</th>
                 </tr>
             </thead>

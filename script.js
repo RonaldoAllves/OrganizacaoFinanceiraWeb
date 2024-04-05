@@ -53,7 +53,6 @@ async function preencherTabelaCategorias() {
 }
 
 // Função para filtrar e preencher os dados das categorias na tabela
-// Função para filtrar e preencher os dados das categorias na tabela
 function FiltrarVerbasMesCategorias(categorias, meses) {
     // Referência à tabela do corpo
     let tbody = document.querySelector('#categoriasTable tbody');
@@ -95,7 +94,8 @@ function FiltrarVerbasMesCategorias(categorias, meses) {
 
         // Criar uma nova linha na tabela para cada categoria
         let row = tbody.insertRow();
-
+		
+		let gastoMes;
         if (mesAux) {
             // Filtrar as saídas para o mês atual
             let saidasMes = saidasCategoria.filter(saida =>
@@ -105,16 +105,16 @@ function FiltrarVerbasMesCategorias(categorias, meses) {
 
             mesAux.verbaMes = mesAux.verbaOriginal + mesAux.verbaAdicional;
 
+			gastoMes = saidasMes.reduce((total, saida) => total + saida.valorParcela, 0)
             // Calcular o saldo do mês
-            mesAux.saldoMes = mesAux.verbaMes - saidasMes.reduce((total, saida) => total + saida.valorParcela, 0);
+            mesAux.saldoMes = mesAux.verbaMes - gastoMes;
         }
 
         // Preencher os dados nas células da linha
         let cells = [
             categoria.descricao,
-            mesAux ? mesAux.verbaOriginal.toFixed(2) : '-',
-            mesAux ? mesAux.verbaAdicional.toFixed(2) : '-',
             mesAux ? mesAux.verbaMes.toFixed(2) : '-',
+            gastoMes ? gastoMes.toFixed(2) : '-',
             mesAux ? mesAux.saldoMes.toFixed(2) : '-',
             categoria.saldoTotal.toFixed(2)
         ];
