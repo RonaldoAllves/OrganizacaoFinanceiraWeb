@@ -6,26 +6,34 @@
     <title>Categorias</title>
     <style>
         .negativo {
-            color: yellow;
+            color: red;
             font-weight: bold;
         }
-		
-		h1, h3 {
-            color: rgba(239, 113, 205, 0.5);
+        
+        h1, h3 {
+            color: rgba(239, 113, 205);
         }
-		
-		h4, label {
+        
+        h4, label {
             color: white;
         }
-		
-		label {
-			width: 160px;
-			display: inline-block;
-		}
+        
+        label {
+            width: 160px;
+            display: inline-block;
+        }
 
-        td, th {
-            text-align: right;
+        th {
+            text-align: left;
             color: white;
+            background-color: rgba(71, 131, 198); /* Cor de fundo do cabeçalho */
+            padding: 5px;
+        }
+
+        td {
+            text-align: right;
+            color: black; /* Cor do texto do restante das células */
+            background-color: white; /* Cor de fundo do restante das células */
             padding: 5px;
         }
 
@@ -50,106 +58,105 @@
 <body style="background-color: rgba(91, 10, 130, 1);">
    
     <button onclick="carregarTabelaCategorias()">Categorias</button>
-	<button onclick="carregarSaidas()">Saídas</button>
+    <button onclick="carregarSaidas()">Saídas</button>
 
    
     <div id="parte1">
-		<h1>Categorias</h1>
-		<table id="categoriasTable" border="1">
-			<thead>
-				<tr>
-					<th style="text-align: left;">Descrição</th>
-					<th>Verba Original</th>
-					<th>Verba Adicional</th>
-					<th>Verba do Mês</th>
-					<th>Saldo do Mês</th>
-					<th>Saldo Total</th>
-				</tr>
-			</thead>
-			<tbody>
-				<!-- Os dados das categorias serão inseridos aqui -->
-			</tbody>
-		</table>
-		<br><br>
-		<!-- Adicione os campos para receber os totais de verba e saldo do mês -->
-		<div>
-			<h4>Verba Total do Mês: <span id="tbxVerbaTotalMes" style="color: rgba(239, 113, 205, 0.5); font-size: 20px;"></span></h4>
-			<h4>Saldo Total do Mês: <span id="tbxSaldoTotalMes" style="color: rgba(239, 113, 205, 0.5); font-size: 20px;"></span></h4>
-		</div>
-	</div>
+        <h1>Categorias</h1>
+        <table id="categoriasTable" border="1">
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Verba Original</th>
+                    <th>Verba Adicional</th>
+                    <th>Verba do Mês</th>
+                    <th>Saldo do Mês</th>
+                    <th>Saldo Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Os dados das categorias serão inseridos aqui -->
+            </tbody>
+        </table>
+        <br><br>
+        <!-- Adicione os campos para receber os totais de verba e saldo do mês -->
+        <div>
+            <h4>Verba Total do Mês: <span id="tbxVerbaTotalMes" style="color: rgba(239, 113, 205); font-size: 20px;"></span></h4>
+            <h4>Saldo Total do Mês: <span id="tbxSaldoTotalMes" style="color: rgba(239, 113, 205); font-size: 20px;"></span></h4>
+        </div>
+    </div>
     
-	<div id="parte2" style="display: none;">
-		<h3>Últimas 20 Saídas</h3>
-		<table id="ultimasSaidasTable" border="1">
-			<thead>
-				<tr>
-					<th>Descrição</th>
-					<th>Valor</th>
-					<th>Data</th>
-					<th>Categoria</th>
-					<th>Conta</th>
-					<th>Mês de Referência</th>
-					<th>Tipo de Saída</th>
-				</tr>
-			</thead>
-			<tbody>
-				<!-- Os dados das últimas saídas serão inseridos aqui -->
-			</tbody>
-		</table>
-		<br>
-		
-		<table id="valorCreditoPorContaTable" border="1">
-			<thead>
-				<tr>
-					<th>Descrição da Conta</th>
-					<th>Mês Atual</th>
-					<th>Valor Gasto no Crédito</th>
-				</tr>
-			</thead>
-			<tbody>
-				<!-- Os dados das contas serão inseridos aqui -->
-			</tbody>
-		</table>
+    <div id="parte2" style="display: none;">
+        <h3>Últimas 20 Saídas</h3>
+        <table id="ultimasSaidasTable" border="1">
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Data</th>
+                    <th>Categoria</th>
+                    <th>Conta</th>
+                    <th>Mês de Referência</th>
+                    <th>Tipo de Saída</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Os dados das últimas saídas serão inseridos aqui -->
+            </tbody>
+        </table>
+        <br>
+        
+        <table id="valorCreditoPorContaTable" border="1">
+            <thead>
+                <tr>
+                    <th>Descrição da Conta</th>
+                    <th>Mês Atual</th>
+                    <th>Valor Gasto no Crédito</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Os dados das contas serão inseridos aqui -->
+            </tbody>
+        </table>
 
-		
-		<!-- Adicione este formulário após a tabela de categorias -->
-		<div>
-			<h3>Inserir Nova Saída</h3>
-			<form id="formNovaSaida">
-				<label for="descricao">Descrição:</label>
-				<input type="text" id="descricao" name="descricao" required><br><br>
+        
+        <!-- Adicione este formulário após a tabela de categorias -->
+        <div>
+            <h3>Inserir Nova Saída</h3>
+            <form id="formNovaSaida">
+                <label for="descricao">Descrição:</label>
+                <input type="text" id="descricao" name="descricao" required><br><br>
 
-				<label for="valor">Valor:</label>
-				<input type="number" id="valor" name="valor" required><br><br>
+                <label for="valor">Valor:</label>
+                <input type="number" id="valor" name="valor" required><br><br>
 
-				<label for="data">Data de Lançamento:</label>
-				<input type="date" id="data" name="data" required><br><br>
+                <label for="data">Data de Lançamento:</label>
+                <input type="date" id="data" name="data" required><br><br>
 
-				<label for="categoria">Categoria:</label>
-				<select id="categoria" name="categoria">
-					<!-- Opções de categoria serão preenchidas dinamicamente pelo JavaScript -->
-				</select><br><br>
+                <label for="categoria">Categoria:</label>
+                <select id="categoria" name="categoria">
+                    <!-- Opções de categoria serão preenchidas dinamicamente pelo JavaScript -->
+                </select><br><br>
 
-				<label for="conta">Conta:</label>
-				<select id="conta" name="conta">
-					<!-- Opções de conta serão preenchidas dinamicamente pelo JavaScript -->
-				</select><br><br>
+                <label for="conta">Conta:</label>
+                <select id="conta" name="conta">
+                    <!-- Opções de conta serão preenchidas dinamicamente pelo JavaScript -->
+                </select><br><br>
 
-				<label for="mesReferencia">Mês de Referência:</label>
-				<input type="month" id="mesReferencia" name="mesReferencia" required><br><br>
+                <label for="mesReferencia">Mês de Referência:</label>
+                <input type="month" id="mesReferencia" name="mesReferencia" required><br><br>
 
-				<label for="tipoSaida">Tipo de Saída:</label>
-				<select id="tipoSaida" name="tipoSaida">
-					<option value="credito">Crédito</option>
-					<option value="dinheiro">Dinheiro</option>
-				</select><br><br>
+                <label for="tipoSaida">Tipo de Saída:</label>
+                <select id="tipoSaida" name="tipoSaida">
+                    <option value="credito">Crédito</option>
+                    <option value="dinheiro">Dinheiro</option>
+                </select><br><br>
 
-				<button type="button" onclick="inserirSaida()">Inserir Saída</button>
-			</form>
-		</div>
-	</div>
-	
-	
+                <button type="button" onclick="inserirSaida()">Inserir Saída</button>
+            </form>
+        </div>
+    </div>
+    
 
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
