@@ -6,6 +6,10 @@
     <title>Contas</title>
 	<link rel="stylesheet" href="normalize.css">
     <link rel="stylesheet" href="style.css">
+	
+	<!-- Adicionando scripts do Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
 </head>
 <body>
     <div class="carousel-container">
@@ -35,7 +39,7 @@
 	
 	<!-- Lista de contas -->
 	<div class="transaction-list">
-		<div class="lista" id="accountsList" style="display: none;">
+		<div class="lista" id="accountsList">
 			<ol id="accounts"></ol>
 		</div>
     </div>

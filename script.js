@@ -16,9 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Calcular a largura total do carrossel e a largura visível do contêiner
     const maxTranslate = -(carousel.scrollWidth - carouselContainer.clientWidth);
-	
-	console.log(carousel.scrollWidth)
-	console.log(carouselContainer.clientWidth)
 
     carousel.addEventListener('touchstart', touchStart);
     carousel.addEventListener('touchend', touchEnd);
