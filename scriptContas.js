@@ -7,7 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let prevTranslate = 0;
     let animationID;
 
-
+	let widthPage = parseInt(window.innerWidth, 10);		
+	let w = 0
+	
+	if (widthPage < carousel.scrollWidth) {
+		w = (widthPage - 430) * -0.454545 + 100
+	}	
+    
 	console.log(window.innerWidth)
     // Calcular a largura total do carrossel e a largura visível do contêiner
     const maxTranslate = -(carousel.scrollWidth - carouselContainer.clientWidth);
@@ -48,9 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Posicionar o carrossel no início
-    carousel.style.transform = 'translateX(100px)';
-    currentTranslate = 100;
-    prevTranslate = 100;
+    carousel.style.transform = `translateX(${w}px)`;;
+    currentTranslate = w;
+    prevTranslate = w;
 
 });
 
