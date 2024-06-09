@@ -1,3 +1,80 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const carousel = document.querySelector('.carousel');
+    const carouselContainer = document.querySelector('.carousel-container');
+    let isDragging = false;
+    let startPos = 0;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+    let animationID;
+	
+	let widthPage = parseInt(window.innerWidth, 10);		
+	let w = 0
+	
+	if (widthPage < carousel.scrollWidth) {
+		w = (widthPage - 430) * -0.454545 + 100
+	}	
+
+    // Calcular a largura total do carrossel e a largura visível do contêiner
+    const maxTranslate = -(carousel.scrollWidth - carouselContainer.clientWidth);
+	
+	console.log(carousel.scrollWidth)
+	console.log(carouselContainer.clientWidth)
+
+    carousel.addEventListener('touchstart', touchStart);
+    carousel.addEventListener('touchend', touchEnd);
+    carousel.addEventListener('touchmove', touchMove);
+
+    function touchStart(event) {
+        isDragging = true;
+        startPos = getTouchPosition(event);
+        animationID = requestAnimationFrame(animation);
+    }
+
+    function touchEnd() {
+        isDragging = false;
+        cancelAnimationFrame(animationID);
+        prevTranslate = currentTranslate;
+    }
+
+    function touchMove(event) {
+        if (isDragging) {
+            const currentPosition = getTouchPosition(event);
+            currentTranslate = prevTranslate + currentPosition - startPos;
+            // Limitar o quanto pode rolar
+            currentTranslate = Math.max(currentTranslate, maxTranslate);
+            currentTranslate = Math.min(currentTranslate, w);
+        }
+    }
+
+    function getTouchPosition(event) {
+        return event.touches[0].clientX;
+    }
+
+    function animation() {
+        carousel.style.transform = `translateX(${currentTranslate}px)`;
+        if (isDragging) requestAnimationFrame(animation);
+    }
+
+    // Posicionar o carrossel no início
+    carousel.style.transform = `translateX(${w}px)`;
+    currentTranslate = w;
+    prevTranslate = w;
+
+    // Função para alternar entre campos de compra e entrada
+    toggleFields();
+});
+
+// Função para alternar os campos específicos de compra
+function toggleFields() {
+    let transactionType = document.querySelector('input[name="transactionType"]:checked').value;
+    let compraFields = document.getElementById('compraFields');
+    if (transactionType === 'compra') {
+        compraFields.style.display = 'block';
+    } else {
+        compraFields.style.display = 'none';
+    }
+}
+
 // Inicializa o Firebase
 var firebaseConfig = {
     apiKey: "AIzaSyCWiM5XNYiIzbPBUFrF-xYZDaWvSwDLYqM",
@@ -9,412 +86,200 @@ var firebaseConfig = {
     appId: "1:663949527873:web:3e08a6d287d37fc46f2fc0",
     measurementId: "G-F3XLECQGNR"
 };
+
 firebase.initializeApp(firebaseConfig);
 
-let dadosCategorias = firebase.database().ref('/Categorias');
-let dadosMeses = firebase.database().ref('/Meses');
-let categorias;
-let contas;
-let saidas;
+let saidasRef   = firebase.database().ref('/Saidas');
+let entradasRef = firebase.database().ref('/Entradas');
 
-// Função para esconder a primeira parte e exibir a segunda parte
-function carregarSaidas() {
-    document.getElementById('parte1').style.display = 'none';
-    document.getElementById('parte2').style.display = 'block';
-}
-
-// Função para esconder a segunda parte e exibir a primeira parte
-function carregarTabelaCategorias() {
-    document.getElementById('parte2').style.display = 'none';
-    document.getElementById('parte1').style.display = 'block';
-}
-
-
-// Função para buscar e preencher a tabela com os dados das categorias
-async function preencherTabelaCategorias() {
+// Função para preencher as comboboxes de categorias e contas
+async function preencherComboboxes() {
     try {
-        // Buscar categorias
-        let snapshotCategorias = await dadosCategorias.once('value');
-        categorias = snapshotCategorias.val();
-
-        // Buscar meses
-        let snapshotMeses = await dadosMeses.once('value');
-        let meses = snapshotMeses.val();
-
-        // Buscar saídas
-        let snapshotSaidas = await firebase.database().ref('/Saidas').once('value');
-        saidas = snapshotSaidas.val();
-
-        // Chamar a função para filtrar e preencher os dados na tabela
-        FiltrarVerbasMesCategorias(categorias, meses);
-    } catch (error) {
-        console.error("Erro ao obter categorias, meses e saídas: ", error);
-    }
-}
-
-// Função para filtrar e preencher os dados das categorias na tabela
-function FiltrarVerbasMesCategorias(categorias, meses) {
-    // Referência à tabela do corpo
-    let tbody = document.querySelector('#categoriasTable tbody');
-
-    // Limpa o conteúdo anterior da tabela
-    tbody.innerHTML = '';
-
-    // Data do mês de referência
-    let dtpMesRefVerbaTotal = new Date(); // ou defina sua data de referência aqui
-
-    // Verba total do mês e saldo total do mês
-    let verbaTotalMes = 0;
-    let saldoTotalMes = 0;
-
-    // Converter o objeto em um array
-    meses = Object.values(meses);
-    saidas = Object.values(saidas);
-
-    // Iterar sobre as categorias
-    for (let chaveCategoria in categorias) {
-        let categoria = categorias[chaveCategoria];
-
-        // Encontrar o mês correspondente à categoria
-        let mesAux = meses.find(mes => mes.mes && new Date(mes.mes).getMonth() == dtpMesRefVerbaTotal.getMonth() && new Date(mes.mes).getFullYear() == dtpMesRefVerbaTotal.getFullYear() && mes.chaveCategoria == categoria.chave);
-
-        // Encontrar as saídas correspondentes à categoria
-        let saidasCategoria = saidas.filter(saida => saida.chaveCategoria == categoria.chave);
-
-        // Calcular a verba total para a categoria atual
-        let verbaTotal = meses
-            .filter(mes => mes.chaveCategoria === categoria.chave && dataMenorIgual(new Date(mes.mes), new Date(new Date().getTime())))
-            .reduce((total, mes) => total + mes.verbaMes, 0);
-
-        // Calcular o total de saídas para esta categoria
-        let totalSaidasCategoria = saidasCategoria.reduce((total, saida) => total + saida.valorParcela, 0);
-
-        // Atualizar o saldo total da categoria
-        categoria.saldoTotal = verbaTotal - totalSaidasCategoria;
-
-        // Criar uma nova linha na tabela para cada categoria
-        let row = tbody.insertRow();
-		
-		let gastoMes;
-        if (mesAux) {
-            // Filtrar as saídas para o mês atual
-            let saidasMes = saidasCategoria.filter(saida =>
-                new Date(saida.mesReferencia).getMonth() === new Date(mesAux.mes).getMonth() &&
-                new Date(saida.mesReferencia).getFullYear() === new Date(mesAux.mes).getFullYear()
-            );
-
-            mesAux.verbaMes = mesAux.verbaOriginal + mesAux.verbaAdicional;
-
-			gastoMes = saidasMes.reduce((total, saida) => total + saida.valorParcela, 0)
-            // Calcular o saldo do mês
-            mesAux.saldoMes = mesAux.verbaMes - gastoMes;
-        }
-
-        // Preencher os dados nas células da linha
-        let cells = [
-            categoria.descricao,
-            mesAux ? mesAux.verbaMes.toFixed(2) : '-',
-            gastoMes ? gastoMes.toFixed(2) : '-',
-            mesAux ? mesAux.saldoMes.toFixed(2) : '-',
-            categoria.saldoTotal.toFixed(2)
-        ];
-
-        cells.forEach((value, index) => {
-            let cell = row.insertCell();
-            cell.innerText = value;
-
-            // Adicionar classes CSS para valores negativos e alinhar à direita
-            if (index > 0 && parseFloat(value) < 0) {
-                cell.classList.add('negativo');
-            }
-            cell.style.textAlign = 'right'; // Alinhar à direita
-        });
-
-        // Atualizar a verba total e o saldo total do mês
-        if (mesAux) {
-            verbaTotalMes += mesAux.verbaMes;
-            saldoTotalMes += mesAux.saldoMes;
-        }        
-    }
-
-    // Preencher os totais na interface
-    document.getElementById('tbxVerbaTotalMes').innerText = verbaTotalMes.toFixed(2);
-    document.getElementById('tbxSaldoTotalMes').innerText = saldoTotalMes.toFixed(2);
-}
-
-
-// Função para verificar se uma data é menor ou igual a outra, ignorando o dia
-function dataMenorIgual(data1, data2) {
-    // Criar novas datas com o mesmo ano e mês, mas com o dia fixado como 1
-    let data1SemDia = new Date(data1.getFullYear(), data1.getMonth(), 1);
-    let data2SemDia = new Date(data2.getFullYear(), data2.getMonth(), 1);
-
-    // Verificar se a primeira data é menor ou igual à segunda data
-    return data1SemDia <= data2SemDia;
-}
-
-
-// Função para preencher a combobox de categorias
-async function preencherComboboxCategorias() {
-    try {
-        // Buscar categorias do Firebase
-        let snapshotCategorias = await firebase.database().ref('/Categorias').once('value');
-        let categorias = snapshotCategorias.val();
-
-        // Referência à combobox de categorias
-        let selectCategoria = document.getElementById('categoria');
-
-        // Limpar as opções existentes
-        selectCategoria.innerHTML = '';
-
-        // Adicionar uma opção padrão
-        let defaultOption = document.createElement('option');
-        defaultOption.text = 'Selecione uma categoria';
-        selectCategoria.add(defaultOption);
-
-        // Adicionar cada categoria como uma opção na combobox
-        for (let chaveCategoria in categorias) {
-            let categoria = categorias[chaveCategoria];
-
+        let categoriasSnapshot = await firebase.database().ref('/Categorias').once('value');
+        let categorias = categoriasSnapshot.val();
+        let selectCategoria = document.getElementById('category');
+        selectCategoria.innerHTML = '<option value="">Selecione uma categoria</option>';
+        for (let chave in categorias) {
             let option = document.createElement('option');
-            option.value = categoria.chave; // Usar a chave da categoria como valor
-            option.text = categoria.descricao; // Usar a descrição da categoria como texto da opção
+            option.value = categorias[chave].chave;
+            option.text = categorias[chave].descricao;
             selectCategoria.add(option);
         }
-    } catch (error) {
-        console.error("Erro ao preencher combobox de categorias:", error);
-    }
-}
 
-// Função para preencher a combobox de contas
-async function preencherComboboxContas() {
-    try {
-        // Buscar contas do Firebase
-        let snapshotContas = await firebase.database().ref('/Contas').once('value');
-        contas = snapshotContas.val();
-
-        // Referência à combobox de contas
-        let selectConta = document.getElementById('conta');
-
-        // Limpar as opções existentes
-        selectConta.innerHTML = '';
-
-        // Adicionar uma opção padrão
-        let defaultOption = document.createElement('option');
-        defaultOption.text = 'Selecione uma conta';
-        selectConta.add(defaultOption);
-
-        // Adicionar cada conta como uma opção na combobox
-        for (let chaveConta in contas) {
-            let conta = contas[chaveConta];
-
+        let contasSnapshot = await firebase.database().ref('/Contas').once('value');
+        let contas = contasSnapshot.val();
+        let selectConta = document.getElementById('account');
+        selectConta.innerHTML = '<option value="">Selecione uma conta</option>';
+        for (let chave in contas) {
             let option = document.createElement('option');
-            option.value = conta.chave; // Usar a chave da conta como valor
-            option.text = conta.descricaoConta; // Usar o nome da conta como texto da opção
+            option.value = contas[chave].chave;
+            option.text = contas[chave].descricaoConta;
             selectConta.add(option);
         }
     } catch (error) {
-        console.error("Erro ao preencher combobox de contas:", error);
+        console.error("Erro ao preencher comboboxes:", error);
     }
 }
 
-// Função para inserir uma nova saída
-function inserirSaida() {
-    // Coletar os valores do formulário
-    let descricao = document.getElementById('descricao').value;
-    let valor = parseFloat(document.getElementById('valor').value);
-    let data = document.getElementById('data').value;
-    let categoria = parseInt(document.getElementById('categoria').value);
-    let conta = parseInt(document.getElementById('conta').value);
-    let mesReferencia = document.getElementById('mesReferencia').value;
-    let tipoSaida = document.getElementById('tipoSaida').value;
+// Função para inserir uma nova saída/compra
+async function inserirSaida(event) {
+	
+	console.log("Entrou na saida")
+	
+    event.preventDefault();
 
-    // Validar os valores
-    if (!descricao || isNaN(parseFloat(valor)) || !data || isNaN(categoria) || isNaN(conta) || !mesReferencia || !tipoSaida) {
-        // Se algum campo estiver em branco ou se o valor não for um número válido, exibir mensagem de erro
-        alert("Por favor, preencha todos os campos corretamente.");
-        return; // Parar a execução da função se houver erro
+    let descricao = document.getElementById('description').value;
+    let valor = parseFloat(document.getElementById('value').value);
+    let data = document.getElementById('purchaseDate').value;
+    let chaveCategoria = document.getElementById('category').value;
+    let chaveConta = document.getElementById('account').value;
+    let mesReferencia = document.getElementById('referenceMonth').value;
+    let tipoSaida = document.getElementById('purchaseType').value;
+
+    if (!descricao || isNaN(valor) || !data || !chaveCategoria || !chaveConta || !mesReferencia || !tipoSaida) {
+        alert("Por favor, preencha todos os campos obrigatórios.");
+        return;
     }
 
-    // Criar o objeto de saída
+    let qtdParcelas = parseInt(document.getElementById('installments').value);
+    if (isNaN(qtdParcelas) || qtdParcelas < 1) {
+        qtdParcelas = 1;
+    }
+	console.log(chaveCategoria)
+
     let novaSaida = {
         descricao: descricao,
         valorParcela: valor,
         data: data,
-        chaveCategoria: categoria,
-        chaveConta: conta,
+        chaveCategoria: parseInt(chaveCategoria),
+        chaveConta: parseInt(chaveConta),
         mesReferencia: mesReferencia,
-        tipoSaida: tipoSaida === "credito" ? 0 : 1 // converter para o formato esperado (0 para crédito, 1 para dinheiro)
+        tipoSaida: tipoSaida === "credito" ? 0 : 1,
+        qtdParcelas: qtdParcelas
     };
-	
-	if (saidas){
-		// Encontrar a última chave da lista de saídas
-		let ultimaChave = Object.values(saidas).reduce((maxChave, saida) => {
-			return Math.max(maxChave, saida.chave);
-		}, 0);
 
-		// Definir a chave da nova saída como a última chave mais um
-		novaSaida.chave = ultimaChave + 1;
-	}else{
-		novaSaida.chave = 1;
-	}
-	
-    // Enviar os dados para o Firebase
-    firebase.database().ref('/Saidas/chave-' + novaSaida.chave).set(novaSaida)
-        .then(() => {
-            // Limpar o formulário após a inserção bem-sucedida
-            document.getElementById('formNovaSaida').reset();
+    if (document.querySelector('input[name="transactionType"]:checked').value === 'compra') {
+        novaSaida.dataInicio = document.getElementById('firstInstallmentDate').value || data;
+        novaSaida.valorTotal = parseFloat(document.getElementById('totalPurchaseValue').value) || valor;
+        novaSaida.gastoObrigatorio = document.getElementById('mandatoryExpense').checked;
+        novaSaida.valorExtrapolado = parseFloat(document.getElementById('exceededValue').value) || 0;
+    } else {
+        novaSaida.dataInicio = data;
+        novaSaida.valorTotal = valor;
+    }
 
-            // Atualizar a tabela de categorias
-            preencherTabelaCategorias();
+    try {
+        let snapshotSaidas = await saidasRef.once('value');
+        let saidas = snapshotSaidas.val();
+        let ultimaChave = saidas ? Math.max(...Object.values(saidas).map(saida => saida.chave)) : 0;
+        novaSaida.chave = ultimaChave + 1;
 
-            // Você pode adicionar uma mensagem de sucesso ou redirecionar o usuário para outra página, se desejar
-            alert("Nova saída inserida com sucesso!");
-        })
-        .catch((error) => {
-            console.error("Erro ao inserir nova saída:", error);
-            alert("Erro ao inserir nova saída. Por favor, tente novamente.");
-        });
-		
+        await saidasRef.child('chave-' + novaSaida.chave).set(novaSaida);
+        alert("Nova saída inserida com sucesso!");
+        document.getElementById('transactionForm').reset();
+        toggleFields();
+    } catch (error) {
+        console.error("Erro ao inserir nova saída:", error);
+        alert("Erro ao inserir nova saída. Por favor, tente novamente.");
+    }
 }
 
-// Função para formatar a data no formato "dd/mm/yyyy"
-function formatarData(data) {
-    let dia = String(data.getDate()).padStart(2, '0');
-    let mes = String(data.getMonth() + 1).padStart(2, '0'); // Mês começa do zero, então é necessário adicionar 1
-    let ano = data.getFullYear();
-    return `${dia}/${mes}/${ano}`;
-}
-
-
-function preencherUltimasSaidasMesAtual() {
-    // Referência à tabela do corpo
-    let tbody = document.querySelector('#ultimasSaidasTable tbody');
-
-    // Limpa o conteúdo anterior da tabela
-    tbody.innerHTML = '';
-
-    // Obter o mês e ano atuais
-    let mesAtual = new Date().getMonth();
-    let anoAtual = new Date().getFullYear();
+// Função para inserir uma nova entrada
+async function inserirEntrada(event) {
 	
-	// Formatar o mês de referência no formato "MM/yyyy"
-    let mesReferenciaFormatado = `${(mesAtual+1).toString().padStart(2, '0')}/${anoAtual}`;
-
-    // Filtrar as saídas do mês atual
-    let saídasMesAtual = Object.values(saidas).filter(saida => {
-        let dataSaida = new Date(saida.mesReferencia);
-        return dataSaida.getMonth() === mesAtual && dataSaida.getFullYear() === anoAtual;
-    });
-
-    // Ordenar as saídas do mês atual pela data (do mais recente para o mais antigo)
-    let ultimasSaidasMesAtual = saídasMesAtual.sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 20);
-
-    // Mapear as chaves das categorias para suas descrições correspondentes
-	categorias = Object.values(categorias);
-    let categoriasMap = {};
-    categorias.forEach(categoria => {
-        categoriasMap[categoria.chave] = categoria.descricao;
-    });
+	console.log("Entrou na Entrada")
 	
-	contas = Object.values(contas);
-    let contasMap = {};
-    contas.forEach(conta => {
-        contasMap[conta.chave] = conta.descricaoConta;
-    });
+    event.preventDefault();
 
-    // Iterar sobre as últimas saídas do mês atual
-    ultimasSaidasMesAtual.forEach(saida => {
-        // Criar uma nova linha na tabela para cada saída
-        let row = tbody.insertRow();
+    let descricao = document.getElementById('description').value;
+    let valor = parseFloat(document.getElementById('value').value);
+    let data = document.getElementById('purchaseDate').value;
+    let chaveCategoria = document.getElementById('category').value || 0; // Se não for informado, define como 0
+    let chaveConta = document.getElementById('account').value;
+    let mesReferencia = document.getElementById('referenceMonth').value;
 
-        // Preencher os dados nas células da linha
-        let cells = [
-            saida.descricao,
-            saida.valorParcela.toFixed(2),
-            formatarData(new Date(saida.data)),
-            categoriasMap[saida.chaveCategoria],
-            contasMap[saida.chaveConta], 
-            mesReferenciaFormatado,
-            saida.tipoSaida === 0 ? 'Crédito' : 'Dinheiro' // Exibir o tipo de saída como "Crédito" ou "Dinheiro"
-        ];
+    if (!descricao || isNaN(valor) || !data || !chaveConta || !mesReferencia) {
+        alert("Por favor, preencha todos os campos obrigatórios.");
+        return;
+    }
 
-        cells.forEach(value => {
-            let cell = row.insertCell();
-            cell.innerText = value;
-        });
-    });
-}
+    let novaEntrada = {
+        descricao: descricao,
+        valor: valor,
+        data: data,
+        chaveCategoria: parseInt(chaveCategoria),
+        chaveConta: parseInt(chaveConta),
+        mesReferencia: mesReferencia
+    };
 
-// Função para preencher a tabela com o valor gasto no crédito por conta no mês atual
-function preencherValorCreditoPorConta() {
-    // Referência à tabela do corpo
-    let tbody = document.querySelector('#valorCreditoPorContaTable tbody');
+    try {
+        let entradasRef = firebase.database().ref('/Entradas');
+        let snapshotEntradas = await entradasRef.once('value');
+        let entradas = snapshotEntradas.val();
+        let ultimaChave = entradas ? Math.max(...Object.values(entradas).map(entrada => entrada.chave)) : 0;
+        novaEntrada.chave = ultimaChave + 1;
 
-    // Limpa o conteúdo anterior da tabela
-    tbody.innerHTML = '';
+        await entradasRef.child('chave-' + novaEntrada.chave).set(novaEntrada);
 
-    // Obter o mês e ano atuais
-    let mesAtual = new Date().getMonth();
-    let anoAtual = new Date().getFullYear();
+        if (novaEntrada.chaveCategoria > 0) {
+            let mesesRef = firebase.database().ref('/Meses');
+            let snapshotMeses = await mesesRef.once('value');
+            let meses = snapshotMeses.val();
 
-    // Inicializar um objeto para armazenar o valor gasto no crédito por conta
-    let valorCreditoPorConta = {};
+            // Extrair apenas o mês e o ano da mesReferencia
+            let [anoReferencia, mesReferencia] = novaEntrada.mesReferencia.split('-');
 
-    // Filtrar as saídas do mês atual que são do tipo "Crédito"
-    let saidasMesAtualCredito = Object.values(saidas).filter(saida => {
-        let dataSaida = new Date(saida.mesReferencia);
-        return dataSaida.getMonth() === mesAtual && dataSaida.getFullYear() === anoAtual && saida.tipoSaida === 0; // 0 indica crédito
-    });
+            let mesExistente = Object.values(meses || {}).find(mes => {
+                let [anoMes, mesMes] = mes.mes.split('-');
+                return (
+                    mes.chaveCategoria === novaEntrada.chaveCategoria &&
+                    mesMes === mesReferencia &&
+                    anoMes === anoReferencia
+                );
+            });
 
-    // Iterar sobre as saídas do mês atual do tipo "Crédito"
-    saidasMesAtualCredito.forEach(saida => {
-        // Se a conta ainda não estiver no objeto, inicialize-a com o valor da saída
-        if (!valorCreditoPorConta[saida.chaveConta]) {
-            valorCreditoPorConta[saida.chaveConta] = saida.valorParcela;
-        } else {
-            // Se a conta já estiver no objeto, adicione o valor da saída ao valor existente
-            valorCreditoPorConta[saida.chaveConta] += saida.valorParcela;
+            if (mesExistente) {
+                mesExistente.verbaAdicional += valor;
+                await mesesRef.child(mesExistente.chave).update({ verbaAdicional: mesExistente.verbaAdicional });
+            } else {
+                let novaChaveMes = (await mesesRef.push()).key;
+                let novoMes = {
+                    chave: novaChaveMes,
+                    chaveCategoria: novaEntrada.chaveCategoria,
+                    mes: novaEntrada.mesReferencia,
+                    saldoMes: 0,
+                    verbaAdicional: valor,
+                    verbaMes: 0,
+                    verbaOriginal: 0
+                };
+                await mesesRef.child(novaChaveMes).set(novoMes);
+            }
         }
-    });
 
-    // Mapear as chaves das contas para suas descrições correspondentes
-    let contasMap = {};
-    contas.forEach(conta => {
-        contasMap[conta.chave] = conta.descricaoConta;
-    });
-
-    // Iterar sobre as contas e preencher a tabela
-    Object.entries(valorCreditoPorConta).forEach(([chaveConta, valorGasto]) => {
-        // Encontrar a descrição da conta correspondente
-        let descricaoConta = contasMap[chaveConta];
-
-        // Criar uma nova linha na tabela para cada conta
-        let row = tbody.insertRow();
-
-        // Preencher os dados nas células da linha
-        let cells = [
-            descricaoConta,
-            `${mesAtual + 1}/${anoAtual}`, // Adicionar 1 ao mês porque os meses começam do zero
-            valorGasto.toFixed(2)
-        ];
-
-        cells.forEach(value => {
-            let cell = row.insertCell();
-            cell.innerText = value;
-        });
-    });
+        alert("Nova entrada inserida com sucesso!");
+        document.getElementById('transactionForm').reset();
+        toggleFields();
+    } catch (error) {
+        console.error("Erro ao inserir nova entrada:", error);
+        alert("Erro ao inserir nova entrada. Por favor, tente novamente.");
+    }
 }
 
-// Chamar a função para preencher a tabela do valor gasto no crédito por conta no mês atual quando a página carregar
-window.onload = async function() {
-    await preencherTabelaCategorias();
-    await preencherComboboxCategorias();
-    await preencherComboboxContas();
-    await preencherUltimasSaidasMesAtual();
-    preencherValorCreditoPorConta();
-};
 
+// Event listener
+document.getElementById('transactionForm').addEventListener('submit', function(event) {
+    let transactionType = document.querySelector('input[name="transactionType"]:checked').value;
+    if (transactionType === 'entrada') {
+        inserirEntrada(event);
+    } else {
+        inserirSaida(event);
+    }
+});
+
+
+// Event listeners
+window.addEventListener('load', preencherComboboxes);
+window.addEventListener('load', toggleFields);
 
 
 

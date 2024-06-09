@@ -1,249 +1,116 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categorias</title>
-    <style>
-	    :root{
-			/*--bg-body: #5B0A82;*/
-			--bg-body: white;
-			--color-font: #EF73CD;
-			--color-button: #a13a84;
-			--color-card: #1E212C;
-			--color-error: #ed6f99;
-			--color-placeholder: #918a9194;
-			--color-list: #7c5098;
-			--color-font-list: white;
-			--color-titulo: rgb(71,131,198);
-			--color-button-entradas: #4494db;
-			--color-estatisticas: #6fd86f;
-			--color-grafico: #EF4F43;
-		}
-	
-        .negativo {
-            color: red;
-            font-weight: bold;
-        }
-        
-        h1, h3 {
-            color: rgba(239, 113, 205);
-        }
-        
-        h4, label {
-            color: white;
-        }
-        
-        label {
-            width: 160px;
-            display: inline-block;
-        }
-
-        th {
-            text-align: center; /* Centralizar o texto do cabeçalho */
-            color: white;
-            background-color: rgba(71, 131, 198); /* Cor de fundo do cabeçalho */
-            padding: 5px;
-        }
-
-        td {
-            text-align: right;
-            color: black; /* Cor do texto do restante das células */
-            background-color: white; /* Cor de fundo do restante das células */
-            padding: 5px;
-        }
-
-        tbody tr:nth-child(odd) {
-            background-color: rgba(91, 10, 130, 0.5);
-        }
-
-        tbody tr:nth-child(even) {
-            background-color: rgba(91, 10, 130, 0.8);
-        }
-
-        tbody tr.negativo {
-            background-color: rgba(255, 255, 0, 0.5);
-            color: black;
-        }
-
-        tbody tr.negativo td {
-            font-weight: bold;
-        }
-
-        /* Estilos adicionados para os botões */
-        .buttons-container {
-            display: flex;
-            justify-content: space-around;
-        }
-
-        button {
-            width: 150px; 
-			height: 30px;
-            margin: 10px;
-			border: none;
-			background-color: rgba(68, 148, 219);
-			color: white;
-			border-radius: 10px;
-			cursor: pointer;
-        }
-		
-		button[disabled]{
-			opacity: 0.7;
-		}
-		
-		table{
-		    margin-top: 10px;
-			margin-bottom: 15px;			
-			border-collapse: collapse;
-			width: 90%;
-			background-color: white;
-			overflow: scroll;
-			//max-width: 1000px;
-		}	
-
-		input, select{
-			width: 200px;
-		}
-		
-		.logo img{
-			width: 45px;
-			height: 45px;
-			margin-right: 0px;
-		}
-
-		.logo{
-			display: flex;
-			justify-content: center;
-			align-items: center;   
-		}
-
-		.logo h2{
-			color: var(--color-font);
-		}
-		
-		@media only screen and (max-width: 350px){
-			.logo > h2{
-				display: none;
-			}
-		}
-		
-    </style>
+    <title>Registrar</title>
+    <link rel="stylesheet" href="style.css">
+	<!-- Adicionando scripts do Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
 </head>
-<body style="background-color: rgba(91, 10, 130, 1);">
-   
-    <header>       
-		<div class="container">
-			<div class="logo">
-				<img src="icon-logo.png">
-				<h2>Planejamento Financeiro</h2>
-			</div>
-		</div>
-	</header> 
-   
-    <div class="buttons-container">
-        <button onclick="carregarTabelaCategorias()">Categorias</button>
-        <button onclick="carregarSaidas()">Saídas</button>
-    </div>
-
-   
-    <div id="parte1">
-        <h1>Visão geral</h1>
-        <table id="categoriasTable" border="1">
-            <thead>
-                <tr>
-                    <th>Descrição</th>
-                    <th>Verba do Mês</th>					
-                    <th>Gasto do Mês</th>					
-                    <th>Saldo do mês</th>
-                    <th>Saldo Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Os dados das categorias serão inseridos aqui -->
-            </tbody>
-        </table>
-        <br><br>
-        <!-- Adicione os campos para receber os totais de verba e saldo do mês -->
-        <div>
-            <h4>Verba Total do Mês: <span id="tbxVerbaTotalMes" style="color: rgba(239, 113, 205); font-size: 20px;"></span></h4>
-            <h4>Saldo Total do Mês: <span id="tbxSaldoTotalMes" style="color: rgba(239, 113, 205); font-size: 20px;"></span></h4>
+<body>
+    <div class="carousel-container">
+        <div class="carousel">
+            <div class="carousel-item" style="background-color: #B1EBE4;">
+                <div class="button"></div>
+                <p>Registrar</p>
+            </div>
+            <div class="carousel-item" onclick="location.href='contas.html'" style="background-color: #fdffb6;">
+                <div class="button"></div>
+                <p>Contas</p>
+            </div>
+            <div class="carousel-item" style="background-color: #ffd6a5;">
+                <div class="button"></div>
+                <p>Categorias</p>
+            </div>
+            <div class="carousel-item" style="background-color: #caffbf;">
+                <div class="button"></div>
+                <p>Meses Futuros</p>
+            </div>
+            <div class="carousel-item" style="background-color: #ffadad;">
+                <div class="button"></div>
+                <p>Configurações</p>
+            </div>
         </div>
     </div>
-    
-    <div id="parte2" style="display: none;">
-        <h3>Últimas 20 Saídas</h3>
-        <table id="ultimasSaidasTable" border="1">
-            <thead>
-                <tr>
-                    <th>Descrição</th>
-                    <th>Valor</th>
-                    <th>Data</th>
-                    <th>Categoria</th>
-                    <th>Conta</th>
-                    <th>Mês de Referência</th>
-                    <th>Tipo de Saída</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Os dados das últimas saídas serão inseridos aqui -->
-            </tbody>
-        </table>
-        <br>
-        
-        <table id="valorCreditoPorContaTable" border="1">
-            <thead>
-                <tr>
-                    <th>Descrição da Conta</th>
-                    <th>Mês Atual</th>
-                    <th>Valor Gasto no Crédito</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Os dados das contas serão inseridos aqui -->
-            </tbody>
-        </table>
 
-        
-        <!-- Adicione este formulário após a tabela de categorias -->
-        <div>
-            <h3>Inserir Nova Saída</h3>
-            <form id="formNovaSaida">
-                <label for="descricao">Descrição:</label>
-                <input type="text" id="descricao" name="descricao" required><br><br>
+    <!-- Formulário de compra/entrada -->
+    <form id="transactionForm" class="transaction-form">
+        <div class="radio-buttons">
+            <label>
+                <input type="radio" name="transactionType" value="compra" checked onchange="toggleFields()"> Compra
+            </label>
+            <label>
+                <input type="radio" name="transactionType" value="entrada" onchange="toggleFields()"> Entrada
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="description">Descrição</label>
+            <input type="text" id="description" name="description">
+        </div>
+        <div class="form-group">
+            <label for="value">Valor</label>
+            <input type="number" step="0.01" id="value" name="value">
+        </div>
+        <div class="form-group">
+            <label for="purchaseDate">Data</label>
+            <input type="date" id="purchaseDate" name="purchaseDate">
+        </div>
+        <div class="form-group">
+            <label for="category">Categoria</label>
+            <select id="category" name="category">
+                <!-- Opções serão preenchidas futuramente -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="account">Conta</label>
+            <select id="account" name="account">
+                <!-- Opções serão preenchidas futuramente -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="referenceMonth">Mês de referência</label>
+            <input type="month" id="referenceMonth" name="referenceMonth">
+        </div>
 
-                <label for="valor">Valor:</label>
-                <input type="number" id="valor" name="valor" required><br><br>
-
-                <label for="data">Data de Lançamento:</label>
-                <input type="date" id="data" name="data" required><br><br>
-				
-				<label for="mesReferencia">Mês de Referência:</label>
-                <input type="month" id="mesReferencia" name="mesReferencia" required><br><br>
-
-                <label for="categoria">Categoria:</label>
-                <select id="categoria" name="categoria">
-                    <!-- Opções de categoria serão preenchidas dinamicamente pelo JavaScript -->
-                </select><br><br>
-
-                <label for="conta">Conta:</label>
-                <select id="conta" name="conta">
-                    <!-- Opções de conta serão preenchidas dinamicamente pelo JavaScript -->
-                </select><br><br>                
-
-                <label for="tipoSaida">Tipo de Saída:</label>
-                <select id="tipoSaida" name="tipoSaida">
+        <!-- Campos específicos de compra -->
+        <div id="compraFields">
+            <div class="form-group">
+                <label for="purchaseType">Tipo da compra</label>
+                <select id="purchaseType" name="purchaseType">
                     <option value="credito">Crédito</option>
                     <option value="dinheiro">Dinheiro</option>
-                </select><br><br>
-
-                <button type="button" onclick="inserirSaida()">Inserir Saída</button>
-            </form>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="installments">Quantidade de parcelas</label>
+                <input type="number" id="installments" name="installments">
+            </div>
+            <div class="form-group">
+                <label for="firstInstallmentDate">Data da primeira parcela</label>
+                <input type="date" id="firstInstallmentDate" name="firstInstallmentDate">
+            </div>
+            <div class="form-group">
+                <label for="totalPurchaseValue">Valor total da compra</label>
+                <input type="number" step="0.01" id="totalPurchaseValue" name="totalPurchaseValue">
+            </div>
+            <div class="checkbox-group"> 
+                <input type="checkbox" id="mandatoryExpense" name="mandatoryExpense">
+                <label for="mandatoryExpense">Gasto obrigatório</label>
+            </div>
+            <div class="form-group">
+                <label for="exceededValue">Valor Extrapolado</label>
+                <input type="number" step="0.01" id="exceededValue" name="exceededValue">
+            </div>
         </div>
-    </div>
-    
+        
+        <!-- Botão de salvar -->
+        <div class="form-group">
+            <button type="submit">Salvar</button>
+        </div>
+    </form>
 
-    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
