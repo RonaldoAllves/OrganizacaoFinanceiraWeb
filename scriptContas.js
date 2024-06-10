@@ -92,10 +92,37 @@ async function showAccounts() {
             accountsList.appendChild(emptyMessage);
             return;
         }
+		
+		const today = new Date().toISOString().split('T')[0]; // Data atual no formato yyyy-mm-dd
+		const currentMonth = today.split('-')[1]; // Mês atual
+		const currentYear = today.split('-')[0]; // Ano atual
 
         // Percorrer as contas e preencher a lista
         for (let chave in contas) {
             const conta = contas[chave];
+
+            // Buscar todas as entradas para esta conta
+            let entradasSnapshot = await firebase.database().ref('/Entradas').orderByChild('chaveConta').equalTo(parseInt(conta.chave)).once('value');
+            let entradas = entradasSnapshot.val();
+            let totalEntradas = entradas ? Object.values(entradas)
+                .filter(entrada => entrada.data <= today) // Filtrar por data
+                .reduce((sum, entrada) => sum + entrada.valor, 0) : 0;
+
+            // Buscar todas as saídas para esta conta
+            let saidasSnapshot = await firebase.database().ref('/Saidas').orderByChild('chaveConta').equalTo(parseInt(conta.chave)).once('value');
+            let saidas = saidasSnapshot.val();
+            let totalSaidas = saidas ? Object.values(saidas)
+				.filter(saida => saida.data <= today) // Filtrar por data
+				.reduce((sum, saida) => sum + saida.valorParcela, 0) : 0;	
+
+			let totalSaidasCreditoAtual = saidas ? Object.values(saidas)
+				.filter(saida => saida.tipoSaida === 0 && saida.mesReferencia.split('-')[1] === currentMonth && saida.mesReferencia.split('-')[0] === currentYear)
+				.reduce((sum, saida) => sum + saida.valorParcela, 0) : 0;
+
+            // Calcular o valor atual manualmente
+            let valorAtual = conta.valorInicial + totalEntradas - totalSaidas + totalSaidasCreditoAtual;
+			valorAtual = valorAtual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
             const listItem = document.createElement('li');
 
             const descricao = document.createElement('p'); 
@@ -105,7 +132,7 @@ async function showAccounts() {
 
             const saldoTotal = document.createElement('p');
             saldoTotal.classList.add("subLista");
-            saldoTotal.innerHTML = `Valor Atual: ${conta.valorAtual}`;
+            saldoTotal.innerHTML = `Valor Atual: ${valorAtual}`;
             listItem.appendChild(saldoTotal);
 
             accountsList.appendChild(listItem);
@@ -117,5 +144,6 @@ async function showAccounts() {
         accountsList.appendChild(errorMessage);
     }
 }
+
 
 
