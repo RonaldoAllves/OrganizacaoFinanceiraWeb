@@ -55,10 +55,11 @@ p {
 
 /* Adicionando estilo ao formulário */
 .transaction-form {
-    padding: 10px;
+    padding: 5px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+	width: 90%;
 	max-width: 500px;
 	margin: 20px auto; /* Centraliza a div */
 }
