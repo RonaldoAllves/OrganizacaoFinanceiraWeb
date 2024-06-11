@@ -152,17 +152,19 @@ ol li:hover{
     white-space: nowrap;
     text-align: left;
     margin: 4px 0; 
-    display: inline;
+    display: inline;	
+	font-weight: bold;
+    font-size: 14px;
 }
 
 .subLista{
     width: 50%;
     text-align: right;
     font-style: italic;
-    font-size: 9pt;
     margin: 0px; 
     float: right;
     display: inline;
+	font-size: 14px;
 }
 
 .transaction-list {
@@ -174,6 +176,22 @@ ol li:hover{
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.detailsDiv {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin-top: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    width: 80%;
+    margin: 20px auto; /* Centraliza a div */
+}
+
+.detailsDiv canvas {
+    margin-top: 20px;
 }
 
 

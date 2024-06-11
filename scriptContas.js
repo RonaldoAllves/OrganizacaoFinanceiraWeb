@@ -7,14 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let prevTranslate = 0;
     let animationID;
 
-	let widthPage = parseInt(window.innerWidth, 10);		
-	let w = 0
-	
-	if (widthPage < carousel.scrollWidth) {
-		w = (widthPage - 430) * -0.454545 + 100
-	}	
+    let widthPage = parseInt(window.innerWidth, 10);        
+    let w = 0
     
-    // Calcular a largura total do carrossel e a largura visível do contêiner
+    if (widthPage < carousel.scrollWidth) {
+        w = (widthPage - 430) * -0.454545 + 100;
+    }    
+    
     const maxTranslate = -(carousel.scrollWidth - carouselContainer.clientWidth);
 
     carousel.addEventListener('touchstart', touchStart);
@@ -37,9 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isDragging) {
             const currentPosition = getTouchPosition(event);
             currentTranslate = prevTranslate + currentPosition - startPos;
-            // Limitar o quanto pode rolar
             currentTranslate = Math.max(currentTranslate, maxTranslate);
-            currentTranslate = Math.min(currentTranslate, 100);
+            currentTranslate = Math.min(currentTranslate, w);
         }
     }
 
@@ -52,12 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isDragging) requestAnimationFrame(animation);
     }
 
-    // Posicionar o carrossel no início
     carousel.style.transform = `translateX(${w}px)`;;
     currentTranslate = w;
     prevTranslate = w;
-	
-	showAccounts()
+
+    showAccounts(); // Mostrar contas ao carregar a página
 
 });
 
@@ -75,53 +72,48 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-// Função para mostrar as contas
+let contaSelecionada = null
+
 async function showAccounts() {
     const accountsList = document.getElementById('accounts');
-    accountsList.innerHTML = ''; // Limpar a lista atual
+    accountsList.innerHTML = ''; 
 
     try {
-        // Buscar a lista de contas do Firebase
         let contasSnapshot = await firebase.database().ref('/Contas').once('value');
         let contas = contasSnapshot.val();
 
-        // Verificar se há contas disponíveis
         if (!contas) {
             const emptyMessage = document.createElement('p');
             emptyMessage.innerHTML = 'Nenhuma conta disponível.';
             accountsList.appendChild(emptyMessage);
             return;
         }
-		
-		const today = new Date().toISOString().split('T')[0]; // Data atual no formato yyyy-mm-dd
-		const currentMonth = today.split('-')[1]; // Mês atual
-		const currentYear = today.split('-')[0]; // Ano atual
+        
+        const today = new Date();
+        const currentMonth = String(today.getMonth() + 1).padStart(2, '0');
+        const currentYear = today.getFullYear();
 
-        // Percorrer as contas e preencher a lista
         for (let chave in contas) {
             const conta = contas[chave];
 
-            // Buscar todas as entradas para esta conta
             let entradasSnapshot = await firebase.database().ref('/Entradas').orderByChild('chaveConta').equalTo(parseInt(conta.chave)).once('value');
             let entradas = entradasSnapshot.val();
             let totalEntradas = entradas ? Object.values(entradas)
-                .filter(entrada => entrada.data <= today) // Filtrar por data
+                .filter(entrada => new Date(entrada.data) <= today)
                 .reduce((sum, entrada) => sum + entrada.valor, 0) : 0;
 
-            // Buscar todas as saídas para esta conta
             let saidasSnapshot = await firebase.database().ref('/Saidas').orderByChild('chaveConta').equalTo(parseInt(conta.chave)).once('value');
             let saidas = saidasSnapshot.val();
             let totalSaidas = saidas ? Object.values(saidas)
-				.filter(saida => saida.data <= today) // Filtrar por data
-				.reduce((sum, saida) => sum + saida.valorParcela, 0) : 0;	
+                .filter(saida => new Date(saida.data) <= today)
+                .reduce((sum, saida) => sum + saida.valorParcela, 0) : 0;    
 
-			let totalSaidasCreditoAtual = saidas ? Object.values(saidas)
-				.filter(saida => saida.tipoSaida === 0 && saida.mesReferencia.split('-')[1] === currentMonth && saida.mesReferencia.split('-')[0] === currentYear)
-				.reduce((sum, saida) => sum + saida.valorParcela, 0) : 0;
+            let totalSaidasCreditoAtual = saidas ? Object.values(saidas)
+                .filter(saida => saida.tipoSaida === 0 && saida.mesReferencia.split('-')[1] === currentMonth && saida.mesReferencia.split('-')[0] === String(currentYear))
+                .reduce((sum, saida) => sum + saida.valorParcela, 0) : 0;
 
-            // Calcular o valor atual manualmente
             let valorAtual = conta.valorInicial + totalEntradas - totalSaidas + totalSaidasCreditoAtual;
-			valorAtual = valorAtual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            valorAtual = valorAtual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
             const listItem = document.createElement('li');
 
@@ -135,8 +127,21 @@ async function showAccounts() {
             saldoTotal.innerHTML = `Valor Atual: ${valorAtual}`;
             listItem.appendChild(saldoTotal);
 
+            listItem.addEventListener('click', () => {
+				contaSelecionada = conta;
+				showAccountDetails(conta.chave);
+			});
+
             accountsList.appendChild(listItem);
         }
+
+        const dateInput = document.getElementById('monthPicker');
+        const todayFormatted = `${currentYear}-${currentMonth}`;
+        dateInput.value = todayFormatted;
+        dateInput.addEventListener('change', () => {
+            showAccountDetails();
+		});
+
     } catch (error) {
         console.error("Erro ao buscar contas:", error);
         const errorMessage = document.createElement('p');
@@ -145,5 +150,55 @@ async function showAccounts() {
     }
 }
 
+async function showAccountDetails() {
+	if (!contaSelecionada) return;
+	const chaveConta = contaSelecionada.chave;
+    const dateInput = document.querySelector('input[type="month"]').value;
+    const [year, month] = dateInput.split('-');
 
+    let entradasSnapshot = await firebase.database().ref('/Entradas').orderByChild('chaveConta').equalTo(parseInt(chaveConta)).once('value');
+    let entradas = entradasSnapshot.val();
+    let totalEntradas = entradas ? Object.values(entradas)
+        .filter(entrada => entrada.mesReferencia.startsWith(`${year}-${month}`))
+        .reduce((sum, entrada) => sum + entrada.valor, 0) : 0;
 
+    let saidasSnapshot = await firebase.database().ref('/Saidas').orderByChild('chaveConta').equalTo(parseInt(chaveConta)).once('value');
+    let saidas = saidasSnapshot.val();
+    let totalSaidasCredito = saidas ? Object.values(saidas)
+        .filter(saida => saida.tipoSaida === 0 && saida.mesReferencia.startsWith(`${year}-${month}`))
+        .reduce((sum, saida) => sum + saida.valorParcela, 0) : 0;
+    
+    let totalSaidasDinheiro = saidas ? Object.values(saidas)
+        .filter(saida => saida.tipoSaida === 1 && saida.mesReferencia.startsWith(`${year}-${month}`))
+        .reduce((sum, saida) => sum + saida.valorParcela, 0) : 0;
+
+    const data = {
+        labels: ['Crédito', 'Dinheiro', 'Entradas'],
+        datasets: [{
+            data: [totalSaidasCredito, totalSaidasDinheiro, totalEntradas],
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+            hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+        }]
+    };
+
+    const ctx = document.getElementById('detailsChart').getContext('2d');
+    if (window.detailsChart instanceof Chart) {
+		window.detailsChart.destroy();
+	}
+    window.detailsChart = new Chart(ctx, {
+        type: 'pie',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: `${contaSelecionada.nomeBanco} - ${contaSelecionada.usuarioConta}`
+                }
+            }
+        }
+    });
+}
