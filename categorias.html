@@ -1,15 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contas</title>
+    <title>Categorias</title>
     <link rel="stylesheet" href="normalize.css">
     <link rel="stylesheet" href="style.css">
-
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Adicionando Chart.js -->
 </head>
 <body>
     <div class="carousel-container">
@@ -18,11 +14,11 @@
                 <div class="button"></div>
                 <p>Registrar</p>
             </div>
-            <div class="carousel-item" onclick="showAccounts()" style="background-color: #fdffb6;">
+            <div class="carousel-item" onclick="location.href='contas.html'" style="background-color: #fdffb6;">
                 <div class="button"></div>
                 <p>Contas</p>
             </div>
-            <div class="carousel-item" onclick="location.href='categorias.html'" style="background-color: #ffd6a5;">
+            <div class="carousel-item" style="background-color: #ffd6a5;">
                 <div class="button"></div>
                 <p>Categorias</p>
             </div>
@@ -38,17 +34,13 @@
     </div>
 
     <div class="transaction-list">
-        <div class="lista" id="accountsList">
-            <ol id="accounts"></ol>
-        </div>
-    </div>
-
-    <div id="accountDetails" class="detailsDiv">
 		<input type="month" id="monthPicker">
-		<canvas id="detailsChart"></canvas> <!-- Gráfico de Pizza -->
-	</div>     
+        <ul class="item-list" id="categories"></ul>
+    </div>    
 
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
     <script src="scriptGeral.js"></script>
-    <script src="scriptContas.js"></script>
+    <script src="scriptCategorias.js"></script>
 </body>
 </html>

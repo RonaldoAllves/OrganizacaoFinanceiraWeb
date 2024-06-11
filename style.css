@@ -28,6 +28,7 @@ body {
     text-align: center;
     flex: 0 0 auto;
     margin: 10px;
+	border-radius: 10px;
 }
 
 p {
@@ -54,11 +55,12 @@ p {
 
 /* Adicionando estilo ao formulário */
 .transaction-form {
-    margin: 20px;
     padding: 10px;
     background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+	max-width: 500px;
+	margin: 20px auto; /* Centraliza a div */
 }
 
 .radio-buttons {
@@ -136,8 +138,7 @@ ol li{
     padding: 8px 16px;
     border-radius: 30px;
     margin-bottom: 8px;
-    color: var(--color-font-list);
-    background: var(--color-list);
+    background: #fdffb6;
 }
 
 ol li:hover{
@@ -168,14 +169,13 @@ ol li:hover{
 }
 
 .transaction-list {
-    margin: 20px;
-    padding-top: 10px;
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-bottom: 5px;
+	padding: 5px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	width: 90%;
+	max-width: 500px;
+	margin: 20px auto; /* Centraliza a div */
 }
 
 .detailsDiv {
@@ -188,10 +188,43 @@ ol li:hover{
     font-family: Arial, sans-serif;
     width: 80%;
     margin: 20px auto; /* Centraliza a div */
+	max-width: 500px;
 }
 
 .detailsDiv canvas {
-    margin-top: 20px;
+    margin-top: 10px;
+}
+
+/* Estilo para lista de categorias */
+
+.item-list {
+    list-style: none;
+    padding: 0;
+	max-height: 225px; /* Define a altura máxima */
+    overflow-y: auto;  /* Adiciona a barra de rolagem quando necessário */
+}
+
+.item {
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.item-header {
+    background-color: #ffd6a5;
+    padding: 10px;
+	border-radius: 30px;
+	font-weight: bold;
+    font-size: 14px;
+}
+
+.item-details {
+    display: none;
+    padding: 10px;
+    //background-color: #fafafa;
+}
+
+.item-details p {
+    margin: 5px 0;
 }
 
 
