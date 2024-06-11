@@ -227,4 +227,11 @@ ol li:hover{
     margin: 5px 0;
 }
 
+#monthPicker {
+    display: block;
+    margin: 0 auto; /* Define margens automáticas nas laterais */
+	text-align: center;
+}
+
+
 
