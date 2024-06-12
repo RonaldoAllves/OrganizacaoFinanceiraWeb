@@ -26,6 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 async function showCategories() {
+    const labelCategoriaSelecionada = document.getElementById('labelCategoriaSelecionada');
+	labelCategoriaSelecionada.innerHTML = '';
+	
+	const saidasSelect = document.getElementById('saidasSelect');
+    saidasSelect.innerHTML = '';
+
     const categoriesList = document.getElementById('categories');
     categoriesList.innerHTML = '';
 
@@ -132,7 +138,7 @@ async function showCategories() {
             detailsDiv.appendChild(saldoTotalP);
 			
 			listItem.addEventListener('click', function() {
-                showSaidas(category.chave);
+                showSaidas(category.chave, category.descricao);
             });
 
             listItem.appendChild(detailsDiv);
@@ -146,7 +152,7 @@ async function showCategories() {
     }
 }
 
-async function showSaidas(categoryId) {
+async function showSaidas(categoryId, categoryDescription) {
     const dateInput = document.getElementById('monthPicker').value;
     const [selectedYear, selectedMonth] = dateInput.split('-');
 	
@@ -154,10 +160,11 @@ async function showSaidas(categoryId) {
         let saidasSnapshot = await firebase.database().ref('/Saidas').orderByChild('chaveCategoria').equalTo(categoryId).once('value');
         let saidas = saidasSnapshot.val();
 
+        const labelCategoriaSelecionada = document.getElementById('labelCategoriaSelecionada');
+		labelCategoriaSelecionada.innerHTML = categoryDescription;
+		
         const saidasSelect = document.getElementById('saidasSelect');
         saidasSelect.innerHTML = '';
-		
-		console.log(saidas);
 
         if (saidas) {
             const saidasList = Object.values(saidas)

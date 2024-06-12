@@ -241,11 +241,17 @@ ol li:hover{
 
 #saidasSelect {
     display: block;
-    margin: 0 auto; /* Centraliza horizontalmente */
+    margin: 10px auto; /* Centraliza horizontalmente */
     text-align: center; /* Ajusta o texto para o centro */
     padding: 10px;
     font-size: small;
     width: 94%; /* Ajuste o tamanho conforme necessário */
+}
+
+#labelCategoriaSelecionada{
+	margin: 10px auto;
+	font-weight: bold;
+	text-align: center;
 }
 
 
