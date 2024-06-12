@@ -239,5 +239,15 @@ ol li:hover{
 	width: 94%;
 }
 
+#saidasSelect {
+    display: block;
+    margin: 0 auto; /* Centraliza horizontalmente */
+    text-align: center; /* Ajusta o texto para o centro */
+    padding: 10px;
+    font-size: small;
+    width: 94%; /* Ajuste o tamanho conforme necessário */
+}
+
+
 
 
