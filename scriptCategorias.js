@@ -164,7 +164,7 @@ async function showSaidas(categoryId, categoryDescription) {
 	
     try {
         let saidasSnapshot = await firebase.database().ref('/Saidas').orderByChild('chaveCategoria').equalTo(categoryId).once('value');
-        let saidas = saidasSnapshot.val();
+        let saidas = saidasSnapshot.val();		
 
         const labelCategoriaSelecionada = document.getElementById('labelCategoriaSelecionada');
 		labelCategoriaSelecionada.innerHTML = categoryDescription;

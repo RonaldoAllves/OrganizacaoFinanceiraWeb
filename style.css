@@ -239,7 +239,7 @@ ol li:hover{
 	width: 94%;
 }
 
-#saidasSelect {
+#saidasSelect, #categorySelect {
     display: block;
     margin: 10px auto; /* Centraliza horizontalmente */
     text-align: center; /* Ajusta o texto para o centro */
