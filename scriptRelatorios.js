@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
+	Carrossel();
+	
     const ctx = document.getElementById('myChart').getContext('2d');
     const today = new Date();
     const last12Months = [];
@@ -46,25 +48,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             }),
             datasets: [
                 {
-                    label: 'Saídas Crédito',
+                    label: 'Crédito',
                     data: creditData,
-                    borderColor: 'rgba(0, 255, 50, 1)',
-                    backgroundColor: 'rgba(0, 255, 50, 0.2)',
-                    fill: false
+                    borderColor: 'rgba(0, 255, 100, 1)',
+                    backgroundColor: 'rgba(0, 255, 100, 0.2)',
+                    fill: false,
+                    color: '#ffffff' // Cor da legenda
                 },
                 {
-                    label: 'Saídas Dinheiro',
+                    label: 'Dinheiro',
                     data: cashData,
                     borderColor: 'rgba(255, 99, 132, 1)',
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    fill: false
+                    fill: false,
+                    color: '#ffffff' // Cor da legenda
                 },
                 {
-                    label: 'Total Saídas',
+                    label: 'Total saídas',
                     data: totalData,
                     borderColor: 'rgba(54, 162, 235, 1)',
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    fill: false
+                    fill: false,
+                    color: '#ffffff' // Cor da legenda
                 }
             ]
         },
@@ -73,6 +78,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             plugins: {
                 legend: {
                     position: 'top',
+                    labels: {
+                        color: '#ffffff' // Cor da legenda
+                    }
                 },
                 tooltip: {
                     mode: 'index',
@@ -89,16 +97,51 @@ document.addEventListener('DOMContentLoaded', async () => {
                     display: true,
                     title: {
                         display: true,
-                        text: 'Meses'
-                    }
+                        text: 'Meses',
+                        font: {
+                            size: 16,
+                            family: 'Arial',
+                            weight: 'bold',
+                            lineHeight: 1.2
+                        },
+                        color: '#ffffff' // Cor do título do eixo x
+                    },
+                    ticks: {
+                        font: {
+                            size: 12,
+                            family: 'Arial',
+                            weight: 'normal',
+                            lineHeight: 1.2
+                        },
+                        color: '#ffffff' // Cor das ticks do eixo x
+                    },
                 },
                 y: {
                     display: true,
                     title: {
                         display: true,
-                        text: 'Valor (R$)'
+                        text: 'Valor (R$)',
+                        font: {
+                            size: 16,
+                            family: 'Arial',
+                            weight: 'bold',
+                            lineHeight: 1.2
+                        },
+                        color: '#ffffff' // Cor do título do eixo y
                     },
-                    suggestedMin: 0
+                    ticks: {
+                        font: {
+                            size: 12,
+                            family: 'Arial',
+                            weight: 'normal',
+                            lineHeight: 1.2
+                        },
+                        color: '#ffffff' // Cor das ticks do eixo y
+                    },
+                    suggestedMin: 0,
+					grid: {
+						color: '#949494' // Cor das linhas de grade do eixo x
+					}
                 }
             }
         }

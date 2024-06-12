@@ -25,7 +25,7 @@ function Carrossel(){
 	let w = 0
 	
 	if (widthPage < carousel.scrollWidth) {
-		w = (widthPage - 430) * -0.454545 + 100
+		w = (widthPage - 430) * -0.454545 + 150
 	}	
 
     // Calcular a largura total do carrossel e a largura visível do contêiner
