@@ -23,23 +23,28 @@ async function showAccounts() {
         const today = new Date();
         const currentMonth = String(today.getMonth() + 1).padStart(2, '0');
         const currentYear = today.getFullYear();
+		
+		let entradasSnapshot = await firebase.database().ref('/Entradas').once('value');
+        let entradas = entradasSnapshot.val();
+		
+		let saidasSnapshot = await firebase.database().ref('/Saidas').once('value');
+        let saidas = saidasSnapshot.val();
 
         for (let chave in contas) {
             const conta = contas[chave];
-
-            let entradasSnapshot = await firebase.database().ref('/Entradas').orderByChild('chaveConta').equalTo(parseInt(conta.chave)).once('value');
-            let entradas = entradasSnapshot.val();
-            let totalEntradas = entradas ? Object.values(entradas)
+			
+			let entradasCategoria = Object.values(entradas).filter(entrada => entrada.chaveConta === conta.chave);
+			
+            let totalEntradas = entradasCategoria ? Object.values(entradasCategoria)
                 .filter(entrada => new Date(entrada.data) <= today)
                 .reduce((sum, entrada) => sum + entrada.valor, 0) : 0;
 
-            let saidasSnapshot = await firebase.database().ref('/Saidas').orderByChild('chaveConta').equalTo(parseInt(conta.chave)).once('value');
-            let saidas = saidasSnapshot.val();
-            let totalSaidas = saidas ? Object.values(saidas)
+            let saidasCategoria = Object.values(saidas).filter(saida => saida.chaveConta === conta.chave);
+            let totalSaidas = saidasCategoria ? Object.values(saidasCategoria)
                 .filter(saida => new Date(saida.data) <= today)
                 .reduce((sum, saida) => sum + saida.valorParcela, 0) : 0;    
 
-            let totalSaidasCreditoAtual = saidas ? Object.values(saidas)
+            let totalSaidasCreditoAtual = saidasCategoria ? Object.values(saidasCategoria)
                 .filter(saida => saida.tipoSaida === 0 && saida.mesReferencia.split('-')[1] === currentMonth && saida.mesReferencia.split('-')[0] === String(currentYear))
                 .reduce((sum, saida) => sum + saida.valorParcela, 0) : 0;
 

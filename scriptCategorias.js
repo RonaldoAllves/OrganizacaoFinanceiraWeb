@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function showCategories() {
     const labelCategoriaSelecionada = document.getElementById('labelCategoriaSelecionada');
-	labelCategoriaSelecionada.innerHTML = '';
-	
-	const saidasSelect = document.getElementById('saidasSelect');
+    labelCategoriaSelecionada.innerHTML = '';
+
+    const saidasSelect = document.getElementById('saidasSelect');
     saidasSelect.innerHTML = '';
 
     const categoriesList = document.getElementById('categories');
@@ -39,6 +39,7 @@ async function showCategories() {
     const [selectedYear, selectedMonth] = dateInput ? dateInput.split('-') : [null, null];
 
     try {
+        // Busca todas as categorias
         let categoriesSnapshot = await firebase.database().ref('/Categorias').once('value');
         let categories = categoriesSnapshot.val();
 
@@ -48,6 +49,14 @@ async function showCategories() {
             categoriesList.appendChild(emptyMessage);
             return;
         }
+
+        // Busca todos os meses
+        let mesesSnapshot = await firebase.database().ref('/Meses').once('value');
+        let meses = mesesSnapshot.val();
+
+        // Busca todas as saídas
+        let saidasSnapshot = await firebase.database().ref('/Saidas').once('value');
+        let saidas = saidasSnapshot.val();
 
         const today = new Date();
         const currentYear = today.getFullYear();
@@ -77,15 +86,10 @@ async function showCategories() {
             let totalSaidas = 0;
             let verbaTotal = 0;
 
-            let mesesSnapshot = await firebase.database().ref('/Meses').orderByChild('chaveCategoria').equalTo(category.chave).once('value');
-            let meses = mesesSnapshot.val();
-
             if (meses) {
-                let saidasSnapshot = await firebase.database().ref('/Saidas').orderByChild('chaveCategoria').equalTo(category.chave).once('value');
-                let saidas = saidasSnapshot.val();
+                const filteredMeses = Object.values(meses).filter(mes => mes.chaveCategoria === category.chave);
 
-                for (let chaveMes in meses) {
-                    const mes = meses[chaveMes];
+                for (let mes of filteredMeses) {
                     const [mesAno, mesMes] = mes.mes.split('-');
                     const ano = parseInt(mesAno);
                     const mesNumero = parseInt(mesMes);
@@ -104,13 +108,14 @@ async function showCategories() {
 
                     if (saidas) {
                         totalSaidasMes += Object.values(saidas)
-                            .filter(saida => saida.mesReferencia.startsWith(`${selectedYear}-${selectedMonth}`))
+                            .filter(saida => saida.chaveCategoria === category.chave && saida.mesReferencia.startsWith(`${selectedYear}-${selectedMonth}`))
                             .reduce((sum, saida) => sum + saida.valorParcela, 0);
                     }
                 }
 
                 if (saidas) {
                     totalSaidas += Object.values(saidas)
+                        .filter(saida => saida.chaveCategoria === category.chave)
                         .reduce((sum, saida) => sum + saida.valorParcela, 0);
                 }
 
@@ -136,8 +141,8 @@ async function showCategories() {
             const saldoTotalP = document.createElement('p');
             saldoTotalP.innerHTML = `Saldo Geral: ${saldoTotalCalc.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
             detailsDiv.appendChild(saldoTotalP);
-			
-			listItem.addEventListener('click', function() {
+
+            listItem.addEventListener('click', function () {
                 showSaidas(category.chave, category.descricao);
             });
 
@@ -151,6 +156,7 @@ async function showCategories() {
         categoriesList.appendChild(errorMessage);
     }
 }
+
 
 async function showSaidas(categoryId, categoryDescription) {
     const dateInput = document.getElementById('monthPicker').value;
