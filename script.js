@@ -16,7 +16,7 @@ function toggleFields() {
     }
 }
 
-let saidasRef   = firebase.database().ref('/Saidas');
+let saidasRef = firebase.database().ref('/Saidas');
 let entradasRef = firebase.database().ref('/Entradas');
 
 // Função para preencher as comboboxes de categorias e contas
@@ -50,9 +50,6 @@ async function preencherComboboxes() {
 
 // Função para inserir uma nova saída/compra
 async function inserirSaida(event) {
-	
-	console.log("Entrou na saida")
-	
     event.preventDefault();
 
     let descricao = document.getElementById('description').value;
@@ -72,36 +69,68 @@ async function inserirSaida(event) {
     if (isNaN(qtdParcelas) || qtdParcelas < 1) {
         qtdParcelas = 1;
     }
-	console.log(chaveCategoria)
 
-    let novaSaida = {
-        descricao: descricao,
-        valorParcela: valor,
-        data: data,
-        chaveCategoria: parseInt(chaveCategoria),
-        chaveConta: parseInt(chaveConta),
-        mesReferencia: mesReferencia,
-        tipoSaida: tipoSaida === "credito" ? 0 : 1,
-        qtdParcelas: qtdParcelas
-    };
+    let dataInicio = document.getElementById('firstInstallmentDate').value;
+    let valorTotal = parseFloat(document.getElementById('totalPurchaseValue').value);
 
-    if (document.querySelector('input[name="transactionType"]:checked').value === 'compra') {
-        novaSaida.dataInicio = document.getElementById('firstInstallmentDate').value || data;
-        novaSaida.valorTotal = parseFloat(document.getElementById('totalPurchaseValue').value) || valor;
-        novaSaida.gastoObrigatorio = document.getElementById('mandatoryExpense').checked;
-        novaSaida.valorExtrapolado = parseFloat(document.getElementById('exceededValue').value) || 0;
+    if (qtdParcelas > 1) {
+        if (!dataInicio || isNaN(valorTotal)) {
+            alert("Por favor, preencha a data da primeira parcela e o valor total.");
+            return;
+        }
     } else {
-        novaSaida.dataInicio = data;
-        novaSaida.valorTotal = valor;
+        dataInicio = data;
+        valorTotal = valor;
+    }
+
+    // Calcula a data das parcelas
+    let dataParcelas = [];
+    let dataAtual = new Date(dataInicio);
+	
+    for (let i = 0; i < qtdParcelas; i++) {
+        if (i > 0) {
+            dataAtual.setMonth(dataAtual.getMonth() + 1);            
+        }
+		if (qtdParcelas > 1) dataAtual.setDate(1);  // Define o primeiro dia do mês para parcelas subsequentes 
+        dataParcelas.push(new Date(dataAtual).toISOString().split('T')[0]);
+    }
+
+    // Cria todas as parcelas como saídas individuais
+    let saidas = [];
+    for (let i = 0; i < qtdParcelas; i++) {
+        let dataParcela = dataParcelas[i];
+        let mesReferenciaParcela = dataParcela.substring(0, 7); // yyyy-mm
+
+        saidas.push({
+            descricao: descricao,
+            valorParcela: valor,
+            data: dataParcela,
+            chaveCategoria: parseInt(chaveCategoria),
+            chaveConta: parseInt(chaveConta),
+            mesReferencia: qtdParcelas > 1 ? mesReferenciaParcela : mesReferencia,
+            tipoSaida: tipoSaida === "credito" ? 0 : 1,
+            qtdParcelas: qtdParcelas,
+            parcela: i + 1,
+            dataInicio: dataInicio,
+            valorTotal: valorTotal,
+            gastoObrigatorio: document.getElementById('mandatoryExpense').checked,
+            valorExtrapolado: parseFloat(document.getElementById('exceededValue').value) || 0,
+			dataCadastro: new Date().toISOString()
+        });
     }
 
     try {
         let snapshotSaidas = await saidasRef.once('value');
-        let saidas = snapshotSaidas.val();
-        let ultimaChave = saidas ? Math.max(...Object.values(saidas).map(saida => saida.chave)) : 0;
-        novaSaida.chave = ultimaChave + 1;
+        let saidasExistentes = snapshotSaidas.val();
+        let ultimaChave = saidasExistentes ? Math.max(...Object.values(saidasExistentes).map(saida => saida.chave)) : 0;
 
-        await saidasRef.child('chave-' + novaSaida.chave).set(novaSaida);
+        // Salva cada parcela como uma saída individual
+        for (let i = 0; i < saidas.length; i++) {
+            let novaSaida = saidas[i];
+            novaSaida.chave = ultimaChave + 1 + i;
+            await saidasRef.child('chave-' + novaSaida.chave).set(novaSaida);
+        }
+
         alert("Nova saída inserida com sucesso!");
         document.getElementById('transactionForm').reset();
         toggleFields();
@@ -113,9 +142,6 @@ async function inserirSaida(event) {
 
 // Função para inserir uma nova entrada
 async function inserirEntrada(event) {
-	
-	console.log("Entrou na Entrada")
-	
     event.preventDefault();
 
     let descricao = document.getElementById('description').value;
@@ -192,7 +218,6 @@ async function inserirEntrada(event) {
     }
 }
 
-
 // Event listener
 document.getElementById('transactionForm').addEventListener('submit', function(event) {
     let transactionType = document.querySelector('input[name="transactionType"]:checked').value;
@@ -203,10 +228,6 @@ document.getElementById('transactionForm').addEventListener('submit', function(e
     }
 });
 
-
 // Event listeners
 window.addEventListener('load', preencherComboboxes);
 window.addEventListener('load', toggleFields);
-
-
-
