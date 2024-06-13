@@ -73,14 +73,16 @@
             <label for="value">Valor</label>
             <input type="number" step="0.01" id="value" name="value">
         </div>
-        <div class="form-group">
-            <label for="purchaseDate">Data</label>
-            <input type="date" id="purchaseDate" name="purchaseDate">
-        </div>
-		<div class="form-group">
-            <label for="referenceMonth">Mês de referência</label>
-            <input type="month" id="referenceMonth" name="referenceMonth">
-        </div>
+        <div class="form-group inline-group">
+			<div>
+				<label for="purchaseDate">Data</label>
+				<input type="date" id="purchaseDate" name="purchaseDate">
+			</div>
+			<div>
+				<label for="referenceMonth">Mês de referência</label>
+				<input type="month" id="referenceMonth" name="referenceMonth">
+			</div>
+		</div>
         <div class="form-group">
             <label for="category">Categoria</label>
             <select id="category" name="category">
@@ -104,18 +106,20 @@
                     <option value="dinheiro">Dinheiro</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label for="installments">Quantidade de parcelas</label>
-                <input type="number" id="installments" name="installments">
-            </div>
-            <div class="form-group">
-                <label for="firstInstallmentDate">Data da primeira parcela</label>
-                <input type="date" id="firstInstallmentDate" name="firstInstallmentDate">
-            </div>
-            <div class="form-group">
-                <label for="totalPurchaseValue">Valor total da compra</label>
-                <input type="number" step="0.01" id="totalPurchaseValue" name="totalPurchaseValue">
-            </div>
+            <div class="form-group inline-group">
+				<div>
+					<label for="installments">Qtd. parcelas</label>
+					<input type="number" id="installments" name="installments">
+				</div>
+				<div>
+					<label for="firstInstallmentDate">1ª parcela</label>
+					<input type="date" id="firstInstallmentDate" name="firstInstallmentDate">
+				</div>
+				<div>
+					<label for="totalPurchaseValue">Total compra</label>
+					<input type="number" step="0.01" id="totalPurchaseValue" name="totalPurchaseValue">
+				</div>
+			</div>
             <div class="checkbox-group"> 
                 <input type="checkbox" id="mandatoryExpense" name="mandatoryExpense">
                 <label for="mandatoryExpense">Gasto obrigatório</label>

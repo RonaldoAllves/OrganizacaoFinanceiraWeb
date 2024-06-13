@@ -86,7 +86,7 @@ input[type="number"],
 input[type="month"],
 select {
     width: 94%;
-    padding: 8px;
+    padding: 3px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
@@ -254,6 +254,18 @@ ol li:hover{
 	text-align: center;
 }
 
+.inline-group {
+    display: flex;
+    justify-content: space-between;
+}
 
+.inline-group > div {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.inline-group > div:last-child {
+    margin-right: 0;
+}
 
 
