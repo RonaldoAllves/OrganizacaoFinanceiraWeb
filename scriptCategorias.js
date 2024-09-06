@@ -157,7 +157,6 @@ async function showCategories() {
     }
 }
 
-
 async function showSaidas(categoryId, categoryDescription) {
     const dateInput = document.getElementById('monthPicker').value;
     const [selectedYear, selectedMonth] = dateInput.split('-');

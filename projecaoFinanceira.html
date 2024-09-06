@@ -3,21 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatórios</title>
+    <title>Projeção Financeira</title>
     <link rel="stylesheet" href="normalize.css">
     <link rel="stylesheet" href="style.css?v=1.1">
-    <style>
-        .container {
-            width: 80%;
-            margin: auto;
-            text-align: center;
-			max-width: 1000px;
-        }
 
-        canvas {
-            max-width: 100%;
-        }
-    </style>
 </head>
 <body>
     <div class="carousel-container">
@@ -38,34 +27,38 @@
                 <div class="button"></div>
                 <p>Projeção fin.</p>
             </div>
-			<div class="carousel-item" style="background-color: #9ad0f5;">
+            <div class="carousel-item" onclick="location.href='relatorios.html'" style="background-color: #9ad0f5;">
                 <div class="button"></div>
                 <p>Relatórios</p>
             </div>
             <div class="carousel-item" style="background-color: #ffadad;">
                 <div class="button"></div>
                 <p>Configurações</p>
-            </div>            
+            </div>
         </div>
     </div>
 
-    <div class="container">
-        <h2 style="color: #9ad0f5">Saídas</h2>
-        <canvas id="myChart"></canvas>
-    </div>
-	
-	<div class="container">
-        <h2 style="color: #9ad0f5">Saídas por categoria</h2>
-		<select id="categorySelect" name="categorySelect">
-			<!-- Opções serão preenchidas futuramente -->
-		</select>
-        <canvas id="myChartCategory"></canvas>
+    <div class="projection-table">
+        <h2>Projeção Financeira</h2>
+        <table id="projectionTable">
+            <thead>
+                <tr>
+                    <th>Mês</th>
+                    <th>Saídas</th>
+                    <th>Saídas Parceladas</th>
+                    <th>Entradas</th>
+                    <th>Saldo</th>
+                </tr>
+            </thead>
+            <tbody id="projectionBody">
+                <!-- Aqui serão inseridas as linhas da tabela -->
+            </tbody>
+        </table>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="firebase-app.js"></script>
     <script src="firebase-database.js"></script>
     <script src="scriptGeral.js"></script>
-    <script src="scriptRelatorios.js"></script>
+    <script src="scriptProjecaoFinanceira.js"></script>
 </body>
 </html>

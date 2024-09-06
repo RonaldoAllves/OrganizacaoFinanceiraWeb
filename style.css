@@ -268,4 +268,272 @@ ol li:hover{
     margin-right: 0;
 }
 
+:root{
+    --color-list: #7c5098;
+    --color-font-list: white;
+}
 
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    //background-color: #99D9EA;
+    background-color: #591E8C;
+}
+
+.carousel-container {
+    overflow: hidden;
+    width: 100%;
+    margin-top: 20px; /* Espaço do topo */
+    display: flex;
+    justify-content: center;
+}
+
+.carousel {
+    display: flex;
+    transition: transform 0.3s ease-in-out;
+}
+
+.carousel-item {
+    min-width: 100px;
+    text-align: center;
+    flex: 0 0 auto;
+    margin: 10px;
+	border-radius: 10px;
+}
+
+p {
+    margin-top: 5px;
+    font-size: 12px; /* Tamanho da fonte reduzido */
+}
+
+/* Para facilitar o arrasto no carrossel */
+.carousel-container {
+    overflow: hidden;
+    touch-action: pan-y;
+}
+
+.carousel {
+    display: flex;
+    will-change: transform;
+}
+
+.button {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+}
+
+/* Adicionando estilo ao formulário */
+.transaction-form {
+    padding: 5px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+	width: 90%;
+	max-width: 500px;
+	margin: 20px auto; /* Centraliza a div */
+}
+
+.radio-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="number"],
+input[type="month"],
+select {
+    width: 94%;
+    padding: 3px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="checkbox"] {
+    margin-right: 10px; /* Adicionado */
+}
+
+.checkbox-group { /* Adicionado */
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Novo estilo adicionado para o botão de salvar */
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo para a lista de contas */
+.lista{
+    overflow-y: scroll;
+    border: 5px;
+    border-color: black;
+    scrollbar-width: 5px;
+    margin-bottom: 10px;
+	max-height: 160px;
+}
+
+::-webkit-scrollbar{
+    display: none;
+}
+
+ol{
+    list-style-type: none;
+    padding: 0;      
+}
+ol li{
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 30px;
+    margin-bottom: 8px;
+    background: #fdffb6;
+}
+
+ol li:hover{
+    opacity:0.8;
+}
+
+.listaTitulo{
+    max-width: 20ch;
+    width: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
+    margin: 4px 0; 
+    display: inline;	
+	font-weight: bold;
+    font-size: 14px;
+}
+
+.subLista{
+    width: 50%;
+    text-align: right;
+    font-style: italic;
+    margin: 0px; 
+    float: right;
+    display: inline;
+	font-size: 14px;
+}
+
+.transaction-list {
+	padding: 5px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	width: 90%;
+	max-width: 500px;
+	margin: 20px auto; /* Centraliza a div */
+}
+
+.detailsDiv {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin-top: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    width: 80%;
+    margin: 20px auto; /* Centraliza a div */
+	max-width: 500px;
+}
+
+.detailsDiv canvas {
+    margin-top: 10px;
+}
+
+/* Estilo para lista de categorias */
+
+.item-list {
+    list-style: none;
+    padding: 0;
+	max-height: 225px; /* Define a altura máxima */
+    overflow-y: auto;  /* Adiciona a barra de rolagem quando necessário */
+}
+
+.item {
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.item-header {
+    background-color: #ffd6a5;
+    padding: 10px;
+	border-radius: 30px;
+	font-weight: bold;
+    font-size: 14px;
+}
+
+.item-details {
+    display: none;
+    padding: 10px;
+    //background-color: #fafafa;
+}
+
+.item-details p {
+    margin: 5px 0;
+}
+
+#monthPicker {
+    display: block;
+    margin: 0 auto; /* Define margens automáticas nas laterais */
+	text-align: center;
+}
+
+#purchaseDate {
+	width: 94%;
+}
+
+#saidasSelect, #categorySelect {
+    display: block;
+    margin: 10px auto; /* Centraliza horizontalmente */
+    text-align: center; /* Ajusta o texto para o centro */
+    padding: 10px;
+    font-size: small;
+    width: 94%; /* Ajuste o tamanho conforme necessário */
+}
+
+#labelCategoriaSelecionada{
+	margin: 10px auto;
+	font-weight: bold;
+	text-align: center;
+}
+
+.inline-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.inline-group > div {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.inline-group > div:last-child {
+    margin-right: 0;
+}
