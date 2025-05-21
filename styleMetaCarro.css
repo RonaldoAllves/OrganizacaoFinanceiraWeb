@@ -1,0 +1,75 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /*background: linear-gradient(135deg, #f6f8ff, #e0e7ff);*/
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+
+    background: linear-gradient(-45deg, #0d1b2a, #1b263b, #415a77, #778da9);
+    background-size: 400% 400%;
+    animation: fundoAnimado 15s ease infinite;
+    color: #fff;
+}
+
+@keyframes fundoAnimado {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.meta-container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    animation: aparecer 1s ease;
+}
+
+@keyframes aparecer {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.meta-container h1 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.progresso-box {
+    margin-top: 1rem;
+}
+
+.progresso-info {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.progresso-barra {
+    background-color: #e0e0e0;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 20px;
+    position: relative;
+}
+
+.progresso-barra-preenchida {
+    background: linear-gradient(90deg, #4facfe, #00f2fe);
+    height: 100%;
+    width: 0%;
+    transition: width 1s ease-in-out;
+}
+
+.mensagem-animada {
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    color: #444;
+    font-weight: bold;
+}
