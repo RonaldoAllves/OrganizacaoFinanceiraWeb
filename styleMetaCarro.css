@@ -20,6 +20,12 @@ body {
     100% { background-position: 0% 50%; }
 }
 
+.valor-destaque {
+    color: #800080; /* Roxo escuro */
+    font-weight: bold;
+    font-size: 2rem;
+}
+
 .meta-container {
     background: #fff;
     padding: 2rem;

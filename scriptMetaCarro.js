@@ -19,7 +19,11 @@ function animarValor(valorFinal) {
             clearInterval(interval);
         }
         const valorRestante = Math.max(VALOR_META - valor, 0);
-        valorAtualSpan.textContent = valorRestante.toFixed(2).replace('.', ',');
+        valorAtualSpan.textContent = `R$ ${valorRestante
+                                                .toFixed(2)
+                                                .replace('.', ',')
+                                                .replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+
     }, duracao / passos);
 }
 
