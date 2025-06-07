@@ -35,7 +35,7 @@ firebase.database().ref("DadosGerais/SaldoGeral").once("value")
         barraProgresso.style.width = `${percentual}%`;
         
         moverCarro(percentual);
-        
+
         const mensagem = document.getElementById("mensagemAnimada");
         if (percentual >= 100) {
             mensagem.textContent = "🎉 Meta atingida! Parabéns!";
@@ -166,4 +166,5 @@ function moverCarro(percentual) {
 
     carro.style.left = `${posicao}px`;
 }
+
 
