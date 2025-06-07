@@ -79,3 +79,28 @@ body {
     color: #444;
     font-weight: bold;
 }
+
+.pista-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    height: 130px;
+    margin: 2rem auto;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.pista-fundo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.carro-imagem {
+    position: absolute;
+    bottom: 30px;
+    width: 150px;
+    left: 0;
+    transition: left 1s ease-in-out;
+}

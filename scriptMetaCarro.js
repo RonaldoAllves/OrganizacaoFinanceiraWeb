@@ -33,7 +33,9 @@ firebase.database().ref("DadosGerais/SaldoGeral").once("value")
         animarValor(saldo);
         const percentual = Math.min((saldo / VALOR_META) * 100, 100);
         barraProgresso.style.width = `${percentual}%`;
-
+        
+        moverCarro(percentual);
+        
         const mensagem = document.getElementById("mensagemAnimada");
         if (percentual >= 100) {
             mensagem.textContent = "🎉 Meta atingida! Parabéns!";
@@ -151,3 +153,17 @@ function iniciarParticulasLeves() {
 }
 
 iniciarParticulasLeves(); // chama ao carregar
+
+function moverCarro(percentual) {
+    const carro = document.getElementById("carroImagem");
+    const pista = document.querySelector(".pista-container");
+
+    const pistaLargura = pista.offsetWidth;
+    const carroLargura = carro.offsetWidth;
+
+    const maxPosicao = pistaLargura - carroLargura;
+    const posicao = Math.min((percentual / 100) * maxPosicao, maxPosicao);
+
+    carro.style.left = `${posicao}px`;
+}
+
