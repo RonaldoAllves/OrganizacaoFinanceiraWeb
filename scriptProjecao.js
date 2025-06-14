@@ -2,6 +2,7 @@
 // scriptProjecao.js - Atualizado com maxDeveGastar replicando a lógica do C#
 
 document.addEventListener('DOMContentLoaded', () => {
+    Carrossel();
     carregarProjecao();
 });
 
