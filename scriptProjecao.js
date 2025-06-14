@@ -70,7 +70,10 @@ async function carregarProjecao() {
 
     await preencherMaxDeveGastarMesAtual(projecoes, Object.values(categorias), Object.values(saidas), contas, entradas, lancamentosRecorrentes, lancamentosRecorrentesDetalhado, meses);
     
-    for (const proj of projecoes) {
+    // Ordena em ordem decrescente por maxDeveGastar
+    const projecoesOrdenadas = [...projecoes].sort((a, b) => (b.maxDeveGastar || 0) - (a.maxDeveGastar || 0));
+
+    for (const proj of projecoesOrdenadas) {
         const item = document.createElement('li');
         item.className = 'item';
 

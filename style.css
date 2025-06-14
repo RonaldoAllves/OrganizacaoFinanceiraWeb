@@ -7,7 +7,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    //background-color: #99D9EA;
+    /*background-color: #99D9EA;*/
     background-color: #591E8C;
 }
 
@@ -199,6 +199,13 @@ ol li:hover{
 
 /* Estilo para lista de categorias */
 
+.item-list-projecao {
+    list-style: none;
+    padding: 0;
+	max-height: 300px; /* Define a altura máxima */
+    overflow-y: auto;  /* Adiciona a barra de rolagem quando necessário */
+}
+
 .item-list {
     list-style: none;
     padding: 0;
@@ -222,7 +229,7 @@ ol li:hover{
 .item-details {
     display: none;
     padding: 10px;
-    //background-color: #fafafa;
+    /*background-color: #fafafa;*/
 }
 
 .item-details p {
@@ -277,7 +284,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    //background-color: #99D9EA;
+    /*background-color: #99D9EA;*/
     background-color: #591E8C;
 }
 
@@ -440,16 +447,6 @@ ol li:hover{
 	font-size: 14px;
 }
 
-.transaction-list {
-	padding: 5px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	width: 90%;
-	max-width: 500px;
-	margin: 20px auto; /* Centraliza a div */
-}
-
 .detailsDiv {
     padding: 20px;
     border: 1px solid #ddd;
@@ -465,75 +462,4 @@ ol li:hover{
 
 .detailsDiv canvas {
     margin-top: 10px;
-}
-
-/* Estilo para lista de categorias */
-
-.item-list {
-    list-style: none;
-    padding: 0;
-	max-height: 225px; /* Define a altura máxima */
-    overflow-y: auto;  /* Adiciona a barra de rolagem quando necessário */
-}
-
-.item {
-    margin: 10px 0;
-    cursor: pointer;
-}
-
-.item-header {
-    background-color: #ffd6a5;
-    padding: 10px;
-	border-radius: 30px;
-	font-weight: bold;
-    font-size: 14px;
-}
-
-.item-details {
-    display: none;
-    padding: 10px;
-    //background-color: #fafafa;
-}
-
-.item-details p {
-    margin: 5px 0;
-}
-
-#monthPicker {
-    display: block;
-    margin: 0 auto; /* Define margens automáticas nas laterais */
-	text-align: center;
-}
-
-#purchaseDate {
-	width: 94%;
-}
-
-#saidasSelect, #categorySelect {
-    display: block;
-    margin: 10px auto; /* Centraliza horizontalmente */
-    text-align: center; /* Ajusta o texto para o centro */
-    padding: 10px;
-    font-size: small;
-    width: 94%; /* Ajuste o tamanho conforme necessário */
-}
-
-#labelCategoriaSelecionada{
-	margin: 10px auto;
-	font-weight: bold;
-	text-align: center;
-}
-
-.inline-group {
-    display: flex;
-    justify-content: space-between;
-}
-
-.inline-group > div {
-    flex: 1;
-    margin-right: 10px;
-}
-
-.inline-group > div:last-child {
-    margin-right: 0;
 }
