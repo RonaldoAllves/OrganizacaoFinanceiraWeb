@@ -8,33 +8,32 @@
     <link rel="stylesheet" href="style.css?v=1.1">
 	<style>
 	.resumo-poupanca {
-		text-align: center;
-		font-size: 1.2rem;
-		font-weight: bold;
+		overflow: hidden;
+		margin-top: 20px; /* Espaço do topo */
+		display: flex;
+		justify-content: center;
 		padding: 10px;
-		background: #e6f7ff;
-		margin-bottom: 10px;
+		font-weight: bold;
 	}
 	</style>
 </head>
 <body>
     <div class="carousel-container">
         <div class="carousel">
-            <div class="carousel-item" onclick="location.href='index.html'" style="background-color: #B1EBE4;"><div class="button"></div><p>Registrar</p></div>
-            <div class="carousel-item" onclick="location.href='metaCarro.html'" style="background-color: #e6b3ff;"><div class="button"></div><p>Meta</p></div>
+            <div class="carousel-item" onclick="location.href='index.html'" style="background-color: #B1EBE4;"><div class="button"></div><p>Registrar</p></div>            
             <div class="carousel-item" onclick="location.href='contas.html'" style="background-color: #fdffb6;"><div class="button"></div><p>Contas</p></div>
             <div class="carousel-item" onclick="location.href='categorias.html'" style="background-color: #ffd6a5;"><div class="button"></div><p>Categorias</p></div>
-            <div class="carousel-item" onclick="location.href='projecao.html'" style="background-color: #caffbf;"><div class="button"></div><p>Projeção fin.</p></div>
-            <div class="carousel-item" onclick="location.href='relatorios.html'" style="background-color: #9ad0f5;"><div class="button"></div><p>Relatórios</p></div>
-            <div class="carousel-item" onclick="location.href='mesesFuturo.html'" style="background-color: #ffb3b3;"><div class="button"></div><p>Meses Fut.</p></div>
+			<div class="carousel-item" onclick="location.href='mesesFuturo.html'" style="background-color: #ffb3b3;"><div class="button"></div><p>Meses Fut.</p></div>
+            <div class="carousel-item" onclick="location.href='projecao.html'" style="background-color: #caffbf;"><div class="button"></div><p>Projeção fin.</p></div>			
+            <div class="carousel-item" onclick="location.href='relatorios.html'" style="background-color: #9ad0f5;"><div class="button"></div><p>Relatórios</p></div> 
+			<div class="carousel-item" onclick="location.href='metaCarro.html'" style="background-color: #e6b3ff;"><div class="button"></div><p>Meta</p></div>			
         </div>
     </div>
-	
-	<div class="resumo-poupanca">
-		Poupança atual: <span id="valorPoupanca"></span>
-	</div>
 
     <div class="transaction-list">
+		<div class="resumo-poupanca">
+			Poupança atual: <span id="valorPoupanca"></span>
+		</div>
         <ul class="item-list" id="listaMesesFuturos"></ul>
     </div>
 

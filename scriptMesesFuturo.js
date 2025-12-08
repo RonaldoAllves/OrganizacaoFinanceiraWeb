@@ -15,7 +15,7 @@ async function carregarMesesFuturos() {
     const lancRecSnap = await firebase.database().ref('/LancamentosRecorrentes').once('value');
     const lancDetSnap = await firebase.database().ref('/LancamentosRecorrentesDetalhados').once('value');
     const categoriasSnap = await firebase.database().ref('/Categorias').once('value');
-    //const projecoesSnap = await firebase.database().ref('/Projecoes').once('value'); // se existirem
+	const mesesSnap = await firebase.database().ref('/Meses').once('value');
 
     const contas = Object.values(contasSnap.val() || {});
     const entradas = Object.values(entradasSnap.val() || {});
@@ -23,12 +23,11 @@ async function carregarMesesFuturos() {
     const lancamentosRecorrentes = Object.values(lancRecSnap.val() || {});
     const lancamentosRecorrentesDetalhado = Object.values(lancDetSnap.val() || {});
     const categorias = Object.values(categoriasSnap.val() || {});
-    //const projecoes = Object.values(projecoesSnap.val() || {});
+	const mesesCat = mesesSnap.val() || {};
 	
-	const projecoes = JSON.parse(localStorage.getItem("GLOBAL_PROJECOES") || "[]");
+	const projecoes = [];
+	await carregarProjecao(projecoes, categorias, mesesCat, contas, entradas, saidas, lancamentosRecorrentes, lancamentosRecorrentesDetalhado);
 	const categoriaPoupanca = projecoes.find(p => p.descricaoCategoria?.toLowerCase() === "poupança");
-	
-	atualizarValorTotalContas(contas, saidas, entradas);
 
     // SALDO ATUAL SOMADO DAS CONTAS
     let saldoAtual = contas.reduce((s, c) => s + (c.valorAtual || 0), 0);
@@ -120,7 +119,6 @@ async function carregarMesesFuturos() {
 
 		// valor da poupança vindo das projeções
 		const valorPoupanca = Number(categoriaPoupanca.maxDeveGastar || 0);
-		console.log(valorPoupanca);
 
 		// menor valor de todos os saldos projetados
 		const menorSaldo = Math.min(...meses.map(m => m.saldoGeral));
@@ -304,18 +302,18 @@ function valorFaltaGastarCategoria(categoria, ignorarPoupanca, saidas, data, lan
     const anoRef = data.getFullYear();
 
     const obrigatorioPrevisto = obterValorSaidaCategoriaJS(categoria, data, true, lancRec, lancDet);
-    const obrigatorioRegistrado = saidas
+    const obrigatorioRegistrado = Object.values(saidas)
         .filter(s => s.chaveCategoria === categoria.chave && s.gastoObrigatorio && new Date(s.mesReferencia).getMonth() + 1 === mesRef && new Date(s.mesReferencia).getFullYear() === anoRef)
         .reduce((sum, s) => sum + s.valorParcela, 0);
 
-    const extrapolado = saidas
+    const extrapolado = Object.values(saidas)
         .filter(s => s.chaveCategoria === categoria.chave && s.gastoObrigatorio && new Date(s.mesReferencia).getMonth() + 1 === mesRef && new Date(s.mesReferencia).getFullYear() === anoRef)
         .reduce((sum, s) => sum + (s.valorExtrapolado || 0), 0);
 
     let faltaGastar = obrigatorioPrevisto - obrigatorioRegistrado + extrapolado;
 
     const naoObrigatorioPrevisto = obterValorSaidaCategoriaJS(categoria, data, false, lancRec, lancDet);
-    const naoObrigatorioRegistrado = saidas
+    const naoObrigatorioRegistrado = Object.values(saidas)
         .filter(s => s.chaveCategoria === categoria.chave && !s.gastoObrigatorio && new Date(s.mesReferencia).getMonth() + 1 === mesRef && new Date(s.mesReferencia).getFullYear() === anoRef)
         .reduce((sum, s) => sum + s.valorParcela, 0);
 
@@ -339,7 +337,7 @@ function obterValorSaidaCategoriaJS(categoria, data, obrigatorio, lancRec, lancD
     const chaveCategoria = categoria.chave;
 
     // Encontra o lançamento recorrente válido (sem dataFinal ou com dataFinal >= data)
-    const lanc = lancRec.find(x =>
+    const lanc = Object.values(lancRec).find(x =>
         x.tipoLancamento === tipo &&
         x.obrigatorio === obrigatorio &&
         x.chaveCategoria === chaveCategoria &&
@@ -352,7 +350,7 @@ function obterValorSaidaCategoriaJS(categoria, data, obrigatorio, lancRec, lancD
     const mesDiff = (data.getFullYear() - new Date().getFullYear()) * 12 + (data.getMonth() - new Date().getMonth());
 
     // Tenta buscar detalhado para o mês específico (no C# usa mes = diferencaMeses + 1)
-    const lancRecDet = lancDet.find(x =>
+    const lancRecDet = Object.values(lancDet).find(x =>
         x.tipoLancamento === tipo &&
         x.chaveLancRecorrente === lanc.chave &&
         x.mes === (mesDiff + 1)
@@ -361,7 +359,7 @@ function obterValorSaidaCategoriaJS(categoria, data, obrigatorio, lancRec, lancD
     if (lancRecDet) return lancRecDet.valor;
 
     // Se não houver detalhado: soma de todos recorrentes compatíveis
-    return lancRec
+    return Object.values(lancRec)
         .filter(x =>
             x.tipoLancamento === tipo &&
             x.obrigatorio === obrigatorio &&
@@ -378,7 +376,7 @@ function calcularPrevisaoEntradaExtra(entradas, lancRec, lancDet) {
     const anoAtual = hoje.getFullYear();
 
     // 1. ENTRADAS FIXAS (tipoLancamento == 1, usaMesFixo == true)
-    const entradasFixa = lancRec
+    const entradasFixa = Object.values(lancRec)
         .filter(x =>
             x.tipoLancamento === 1 &&
             x.usaMesFixo &&
@@ -389,7 +387,7 @@ function calcularPrevisaoEntradaExtra(entradas, lancRec, lancDet) {
 
     // 2. ENTRADAS RECORRENTES DETALHADAS DO MÊS (tipoLancamento=1, mes=N)
     const entradasRecorrentesDetalhado =
-        lancDet
+        Object.values(lancDet)
             .filter(x =>
                 x.tipoLancamento === 1 &&
                 x.mes === mesAtual
@@ -398,7 +396,7 @@ function calcularPrevisaoEntradaExtra(entradas, lancRec, lancDet) {
         + entradasFixa;
 
     // 3. ENTRADAS JÁ REGISTRADAS DO MÊS ATUAL
-    let entradasMes = entradas
+    let entradasMes = Object.values(entradas)
         .filter(x =>
             x.mesReferencia &&
             new Date(x.mesReferencia).getMonth() + 1 === mesAtual &&
@@ -409,7 +407,7 @@ function calcularPrevisaoEntradaExtra(entradas, lancRec, lancDet) {
         .reduce((s, x) => s + (Number(x.valor) || 0), 0);
 
     // 3b. ENTRADAS COM chaveCategoriaMesFuturo (>0)
-    entradasMes += entradas
+    entradasMes += Object.values(entradas)
         .filter(x =>
             x.mesReferencia &&
             new Date(x.mesReferencia).getMonth() + 1 === mesAtual &&
