@@ -12,6 +12,9 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+// Variáveis globais compartilhadas entre as telas
+window.GLOBAL_PROJECOES = [];
+
 function Carrossel(){
 	const carousel = document.querySelector('.carousel');
     const carouselContainer = document.querySelector('.carousel-container');
@@ -78,3 +81,38 @@ function onResize() {
 
 // Adiciona o evento resize ao window
 window.addEventListener('resize', onResize);
+
+function atualizarValorTotalContas(contas, saidas, entradas) {
+	const hoje = new Date();
+	
+	console.log("atualizarValorTotalContas");
+
+	for (const conta of contas) {
+		const chaveConta = conta.chave;
+
+		// Total de saídas até hoje (inclusive)
+		let saidasConta = Object.values(saidas)
+			.filter(s => s.chaveConta === chaveConta && s.mesReferencia && new Date(s.mesReferencia) <= hoje)
+			.reduce((soma, s) => soma + s.valorParcela, 0);
+
+		// Total de entradas até hoje (inclusive)
+		let entradasConta = Object.values(entradas)
+			.filter(e => e.chaveConta === chaveConta && e.mesReferencia && new Date(e.mesReferencia) <= hoje)
+			.reduce((soma, e) => soma + e.valor, 0);
+
+		// Crédito do mês atual (saídas do tipo 0 exatamente no mês atual)
+		let creditoMesAtual = Object.values(saidas)
+			.filter(s => s.chaveConta === chaveConta && s.tipoSaida === 0 && s.mesReferencia && datasIguaisMesAno(new Date(s.mesReferencia), hoje))
+			.reduce((soma, s) => soma + s.valorParcela, 0);
+
+		saidasConta -= creditoMesAtual;
+
+		// valorAtual = valorInicial - saídas + entradas
+		conta.valorAtual = (conta.valorInicial || 0) - saidasConta + entradasConta;
+	}
+}
+
+// Função auxiliar para comparar mês/ano das datas
+function datasIguaisMesAno(data1, data2) {
+	return data1.getMonth() === data2.getMonth() && data1.getFullYear() === data2.getFullYear();
+}

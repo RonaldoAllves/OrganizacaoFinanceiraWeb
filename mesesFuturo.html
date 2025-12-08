@@ -3,9 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projeção de Gastos</title>
+    <title>Meses Futuros</title>
     <link rel="stylesheet" href="normalize.css">
     <link rel="stylesheet" href="style.css?v=1.1">
+	<style>
+	.resumo-poupanca {
+		text-align: center;
+		font-size: 1.2rem;
+		font-weight: bold;
+		padding: 10px;
+		background: #e6f7ff;
+		margin-bottom: 10px;
+	}
+	</style>
 </head>
 <body>
     <div class="carousel-container">
@@ -19,14 +29,18 @@
             <div class="carousel-item" onclick="location.href='mesesFuturo.html'" style="background-color: #ffb3b3;"><div class="button"></div><p>Meses Fut.</p></div>
         </div>
     </div>
+	
+	<div class="resumo-poupanca">
+		Poupança atual: <span id="valorPoupanca"></span>
+	</div>
 
     <div class="transaction-list">
-        <ul class="item-list-projecao" id="projecaoList"></ul>
+        <ul class="item-list" id="listaMesesFuturos"></ul>
     </div>
 
     <script src="firebase-app.js"></script>
     <script src="firebase-database.js"></script>
     <script src="scriptGeral.js"></script>
-    <script src="scriptProjecao.js"></script>
+    <script src="scriptMesesFuturo.js"></script>
 </body>
 </html>

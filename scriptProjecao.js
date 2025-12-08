@@ -1,6 +1,3 @@
-
-// scriptProjecao.js - Atualizado com maxDeveGastar replicando a lógica do C#
-
 document.addEventListener('DOMContentLoaded', () => {
     Carrossel();
     carregarProjecao();
@@ -69,9 +66,11 @@ async function carregarProjecao() {
     }
 
     await preencherMaxDeveGastarMesAtual(projecoes, Object.values(categorias), Object.values(saidas), contas, entradas, lancamentosRecorrentes, lancamentosRecorrentesDetalhado, meses);
-    
+
     // Ordena em ordem decrescente por maxDeveGastar
     const projecoesOrdenadas = [...projecoes].sort((a, b) => (b.maxDeveGastar || 0) - (a.maxDeveGastar || 0));
+	window.GLOBAL_PROJECOES = projecoesOrdenadas; 
+	localStorage.setItem("GLOBAL_PROJECOES", JSON.stringify(projecoesOrdenadas));
 
     for (const proj of projecoesOrdenadas) {
         const item = document.createElement('li');
@@ -293,37 +292,4 @@ function calcularPrevisaoEntradaExtra(entradas, lancamentosRecorrentes, lancamen
     const entradaExtra = entradasDetalhado + entradasFixa - entradasMes;
 
     return entradaExtra < 0 ? 0 : entradaExtra;
-}
-
-function atualizarValorTotalContas(contas, saidas, entradas) {
-	const hoje = new Date();
-
-	for (const conta of contas) {
-		const chaveConta = conta.chave;
-
-		// Total de saídas até hoje (inclusive)
-		let saidasConta = Object.values(saidas)
-			.filter(s => s.chaveConta === chaveConta && s.mesReferencia && new Date(s.mesReferencia) <= hoje)
-			.reduce((soma, s) => soma + s.valorParcela, 0);
-
-		// Total de entradas até hoje (inclusive)
-		let entradasConta = Object.values(entradas)
-			.filter(e => e.chaveConta === chaveConta && e.mesReferencia && new Date(e.mesReferencia) <= hoje)
-			.reduce((soma, e) => soma + e.valor, 0);
-
-		// Crédito do mês atual (saídas do tipo 0 exatamente no mês atual)
-		let creditoMesAtual = Object.values(saidas)
-			.filter(s => s.chaveConta === chaveConta && s.tipoSaida === 0 && s.mesReferencia && datasIguaisMesAno(new Date(s.mesReferencia), hoje))
-			.reduce((soma, s) => soma + s.valorParcela, 0);
-
-		saidasConta -= creditoMesAtual;
-
-		// valorAtual = valorInicial - saídas + entradas
-		conta.valorAtual = (conta.valorInicial || 0) - saidasConta + entradasConta;
-	}
-}
-
-// Função auxiliar para comparar mês/ano das datas
-function datasIguaisMesAno(data1, data2) {
-	return data1.getMonth() === data2.getMonth() && data1.getFullYear() === data2.getFullYear();
 }
