@@ -11,8 +11,16 @@
 		overflow: hidden;
 		margin-top: 20px; /* Espaço do topo */
 		display: flex;
-		justify-content: center;
 		padding: 10px;
+	}
+	.resumo-poupanca-real {
+		overflow: hidden;
+		display: flex;
+		padding: 10px;		
+	}
+	#valorPoupancaProjetada,
+	#valorPoupancaReal {
+		color: green;
 		font-weight: bold;
 	}
 	</style>
@@ -32,10 +40,14 @@
 
     <div class="transaction-list">
 		<div class="resumo-poupanca">
-			Poupança atual: <span id="valorPoupanca"></span>
+			Poupança projetada: &nbsp; <span id="valorPoupancaProjetada"></span>
 		</div>
-        <ul class="item-list" id="listaMesesFuturos"></ul>
-    </div>
+		<div class="resumo-poupanca-real">
+			Poupança real: &nbsp; <span id="valorPoupancaReal"></span>
+		</div>
+		<ul class="item-list" id="listaMesesFuturos"></ul>
+	</div>
+
 
     <script src="firebase-app.js"></script>
     <script src="firebase-database.js"></script>

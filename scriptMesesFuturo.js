@@ -130,8 +130,8 @@ async function carregarMesesFuturos() {
 		if (poupancaAtual < 0) poupancaAtual = 0;
 
 		// exibir na tela
-		document.getElementById("valorPoupanca").textContent =
-			poupancaAtual.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+		document.getElementById("valorPoupancaProjetada").textContent = valorPoupanca.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+		document.getElementById("valorPoupancaReal").textContent = poupancaAtual.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 	}
 
     // Renderizar
