@@ -123,8 +123,7 @@ async function carregarMesesFuturos() {
 		// menor valor de todos os saldos projetados
 		const menorSaldo = Math.min(...meses.map(m => m.saldoGeral));
 
-		// cálculo final igual você pediu
-		let poupancaAtual = valorPoupanca - Math.abs(menorSaldo);
+		let poupancaAtual = valorPoupanca + menorSaldo;
 
 		// evita valor negativo
 		if (poupancaAtual < 0) poupancaAtual = 0;
