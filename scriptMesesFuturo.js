@@ -260,11 +260,10 @@ function calcularLancamentoRecorrenteDetalhadoJS(lancRecList, data, lancDetList)
 
             // dataDetalhe = DateTime.Now.AddMonths(d.mes - 1)
             const hoje = new Date();
-            const dataDetalhe = new Date(hoje.getFullYear(), hoje.getMonth() + (d.mes - 1), hoje.getDate());
-            // comparar apenas a data (ano, mês, dia)
+            const dataDetalhe = new Date(hoje.getFullYear(), hoje.getMonth() + (d.mes - 1), 1);
+            // comparar apenas a data (ano, mês)
             return dataDetalhe.getFullYear() === data.getFullYear() &&
-                   dataDetalhe.getMonth() === data.getMonth() &&
-                   dataDetalhe.getDate() === data.getDate();
+                   dataDetalhe.getMonth() === data.getMonth();
         });
 
         if (det) valor += Number(det.valor || 0);
